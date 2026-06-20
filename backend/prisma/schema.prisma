@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  PATIENT
+  HOSPITAL
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  patient   Patient?
+  hospital  Hospital?
+}
+
+model Patient {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  citizenId   String   @unique
+  isMinor     Boolean  @default(false)
+  dateOfBirth DateTime
+  fullName    String
+  registeredByHospitalId String?
+  registeredByHospital   Hospital? @relation("RegisteredByHospital", fields: [registeredByHospitalId], references: [id])
+  reports             Report[]
+  hospitalLinks       HospitalPatientLink[]
+  createdAt   DateTime @default(now())
+}
+
+model Hospital {
+  id                 String    @id @default(uuid())
+  userId             String    @unique
+  user               User      @relation(fields: [userId], references: [id])
+  registrationNumber String    @unique
+  name               String
+  address            String
+  createdAt          DateTime  @default(now())
+  patientsRegistered Patient[] @relation("RegisteredByHospital")
+  reports             Report[]
+  patientLinks        HospitalPatientLink[]
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  fileUrl     String
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  hospitalId  String
+  hospital    Hospital @relation(fields: [hospitalId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model HospitalPatientLink {
+  id         String   @id @default(uuid())
+  patientId  String
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  hospitalId String
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  linkedAt   DateTime @default(now())
+
+  @@unique([patientId, hospitalId])
+}

@@ -18,15 +18,22 @@ enum Role {
   ADMIN
 }
 
+enum AccountStatus {
+  UNCLAIMED
+  PENDING_VERIFICATION
+  ACTIVE
+  REJECTED
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String
+  password  String?
   role      Role
-  isVerified Boolean @default(false)
+  status    AccountStatus @default(PENDING_VERIFICATION)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   patient   Patient?
   hospital  Hospital?
 }

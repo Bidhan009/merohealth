@@ -19,7 +19,6 @@ enum Role {
 }
 
 enum AccountStatus {
-  UNCLAIMED
   PENDING_VERIFICATION
   ACTIVE
   REJECTED
@@ -46,8 +45,6 @@ model Patient {
   isMinor     Boolean  @default(false)
   dateOfBirth DateTime
   fullName    String
-  registeredByHospitalId String?
-  registeredByHospital   Hospital? @relation("RegisteredByHospital", fields: [registeredByHospitalId], references: [id])
   reports             Report[]
   hospitalLinks       HospitalPatientLink[]
   createdAt   DateTime @default(now())
@@ -61,7 +58,6 @@ model Hospital {
   name               String
   address            String
   createdAt          DateTime  @default(now())
-  patientsRegistered Patient[] @relation("RegisteredByHospital")
   reports             Report[]
   patientLinks        HospitalPatientLink[]
 }

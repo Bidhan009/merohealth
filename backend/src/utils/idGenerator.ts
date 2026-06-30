@@ -1,3 +1,9 @@
+import crypto from "crypto";
+
+export function generateVerificationToken(): string {
+  return crypto.randomBytes(32).toString("hex");
+}
+
 export function generateMinorId(): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let randomPart = "";

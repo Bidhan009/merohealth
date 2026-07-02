@@ -12,9 +12,9 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold">MeroHealth</h1>
-      <p className="ml-4">{healthStatus}</p>
-    </main>
-  );
+  <main className="flex min-h-screen items-center justify-center font-body">
+    <h1 className="text-2xl font-bold font-heading text-primary">MeroHealth</h1>
+    <p className="ml-4">{healthStatus}</p>
+  </main>
+);
 }

@@ -40,8 +40,6 @@ export default function HospitalRegistrationPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  {/* Document Upload Zone */}
-const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const router = useRouter();
 
   const fullAddress = [streetAddress, municipality, district, province]
@@ -362,28 +360,17 @@ const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
               {/* Document Upload Zone (visual only for now) */}
               <div className="border-2 border-dashed border-border-strong rounded-xl p-10 flex flex-col items-center gap-4 bg-[#f2f4f6]">
-              <div className="w-16 h-16 bg-white rounded-full shadow flex items-center justify-center text-2xl">📄</div>
-              <p className="font-body text-body text-lg text-center">Upload Verification Bundle</p>
-              <p className="font-body text-body text-base text-center">Drag and drop or browse to upload your ZIP/PDF files.</p>
-              <label className="border border-border-strong rounded-full px-6 py-2 font-heading font-semibold text-sm text-primary hover:border-accent transition-colors cursor-pointer">
-                Browse Files
-                <input
-                  type="file"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png,.zip"
-                  className="hidden"
-                  onChange={(e) => setUploadedFiles(Array.from(e.target.files || []))}
-                />
-              </label>
-              {uploadedFiles.length > 0 && (
-                <div className="flex flex-col gap-1 w-full">
-                  {uploadedFiles.map((f, i) => (
-                    <p key={i} className="font-body text-accent text-sm text-center">✓ {f.name}</p>
-                  ))}
-                </div>
-              )}
-              <p className="font-body text-body text-xs text-center opacity-70">Accepted: PDF, JPG, PNG (Max 20MB per file)</p>
-            </div>
+                <div className="w-16 h-16 bg-white rounded-full shadow flex items-center justify-center text-2xl">📄</div>
+                <p className="font-body text-body text-lg text-center">Upload Verification Bundle</p>
+                <p className="font-body text-body text-base text-center">Drag and drop or browse to upload your ZIP/PDF files.</p>
+                <button
+                  type="button"
+                  className="border border-border-strong rounded-full px-6 py-2 font-heading font-semibold text-sm text-primary hover:border-accent transition-colors"
+                >
+                  Browse Files
+                </button>
+                <p className="font-body text-body text-xs text-center opacity-70">Accepted: PDF, JPG, PNG (Max 20MB per file)</p>
+              </div>
 
               {/* Error */}
               {error && (

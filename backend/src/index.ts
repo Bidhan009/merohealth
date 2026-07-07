@@ -8,6 +8,7 @@ import hospitalRoutes from "./routes/hospitalRoutes";
 import patientRoutes from "./routes/patientRoutes";
 import path from "path";
 import rateLimit from "express-rate-limit";
+import { Request, Response, NextFunction } from "express";
 
 //load configuration setup
 dotenv.config(); //pulls in configuration from .env
@@ -34,6 +35,11 @@ app.use("/api/patient", patientRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "MeroHealth backend is running" });
+});
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({ error: "Internal server error" });
 });
 
 const PORT = process.env.PORT || 5000;

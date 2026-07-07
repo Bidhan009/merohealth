@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import { getToken,getRole } from "@/utils/auth";
 
 export default function EditReportPage() {
   const router = useRouter();
@@ -15,10 +16,7 @@ export default function EditReportPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-
-  const token = typeof window !== "undefined"
-    ? localStorage.getItem("token")
-    : null;
+  const token = getToken();
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }

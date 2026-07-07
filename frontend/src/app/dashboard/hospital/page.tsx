@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getToken,logout } from "@/utils/auth";
 
 interface Patient {
   id: string;
@@ -21,10 +22,7 @@ export default function HospitalDashboard() {
   const [searchError, setSearchError] = useState("");
   const [linkMessage, setLinkMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const token = typeof window !== "undefined"
-    ? localStorage.getItem("token")
-    : null;
+  const token = getToken();
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
@@ -77,9 +75,9 @@ export default function HospitalDashboard() {
   }
 
   function handleLogout() {
-    localStorage.clear();
-    router.replace("/login");
-  }
+  logout();
+  router.replace("/login");
+}
 
   return (
     <div className="min-h-screen bg-bg flex flex-col font-body">

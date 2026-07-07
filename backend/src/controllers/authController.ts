@@ -7,6 +7,15 @@ import { generateVerificationToken } from "../utils/idGenerator";
 import { sendVerificationEmail } from "../utils/mailer";
 import { generateToken } from "../utils/jwt";
 
+function isPrismaUniqueError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code: string }).code === "P2002"
+  );
+}
+
 const hospitalRegisterSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
@@ -70,9 +79,14 @@ export async function registerHospital(req: Request, res: Response) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.issues });
     }
+    if (isPrismaUniqueError(error)) {
+      return res.status(409).json({ error: "An account with these details already exists" });
+    }
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
   }
+
+  
 }
 
 export async function registerPatient(req: Request, res: Response) {
@@ -135,6 +149,9 @@ export async function registerPatient(req: Request, res: Response) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.issues });
+    }
+    if (isPrismaUniqueError(error)) {
+      return res.status(409).json({ error: "An account with these details already exists" });
     }
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });

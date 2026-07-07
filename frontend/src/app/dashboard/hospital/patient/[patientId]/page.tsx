@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import { getToken} from "@/utils/auth";
 
 interface Report {
   id: string;
@@ -27,10 +28,7 @@ export default function PatientFilePage() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
-
-  const token = typeof window !== "undefined"
-    ? localStorage.getItem("token")
-    : null;
+  const token=getToken();
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }

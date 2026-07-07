@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getToken,logout } from "@/utils/auth";
 
 interface Report {
   id: string;
@@ -27,9 +28,7 @@ export default function PatientDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const token = typeof window !== "undefined"
-    ? localStorage.getItem("token")
-    : null;
+  const token = getToken();
 
   useEffect(() => {
   if (!token) {
@@ -57,9 +56,9 @@ export default function PatientDashboard() {
 }, []);
 
   function handleLogout() {
-    localStorage.clear();
-    router.replace("/login");
-  }
+  logout();
+  router.replace("/login");
+}
 
   if (loading) {
     return (

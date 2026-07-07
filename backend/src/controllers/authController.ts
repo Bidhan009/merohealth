@@ -90,6 +90,15 @@ export async function registerPatient(req: Request, res: Response) {
     const age = calculateAge(data.dateOfBirth);
     const isMinor = age < 16;
 
+    if (!isMinor && data.citizenId) {
+      const existingCitizenId = await prisma.patient.findUnique({
+        where: { citizenId: data.citizenId },
+      });
+      if (existingCitizenId) {
+        return res.status(409).json({ error: "Citizen ID already registered" });
+      }
+    }
+
     if (!isMinor && !data.citizenId) {
       return res.status(400).json({ error: "Citizen ID is required for non-minors" });
     }

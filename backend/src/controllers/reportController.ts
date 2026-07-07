@@ -146,3 +146,34 @@ export async function editReport(req: AuthRequest, res: Response) {
     return res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+export async function getSingleReport(req: AuthRequest, res: Response) {
+  try {
+    const reportId = req.params.reportId as string;
+
+    const hospital = await prisma.hospital.findUnique({
+      where: { userId: req.user!.userId },
+    });
+
+    if (!hospital) {
+      return res.status(404).json({ error: "Hospital not found" });
+    }
+
+    const report = await prisma.report.findUnique({
+      where: { id: reportId },
+    });
+
+    if (!report) {
+      return res.status(404).json({ error: "Report not found" });
+    }
+
+    if (report.hospitalId !== hospital.id) {
+      return res.status(403).json({ error: "Cannot access another hospital's report" });
+    }
+
+    return res.json(report);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}

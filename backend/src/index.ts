@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes";
 import hospitalRoutes from "./routes/hospitalRoutes";
 import patientRoutes from "./routes/patientRoutes";
 import path from "path";
+import rateLimit from "express-rate-limit";
 
 //load configuration setup
 dotenv.config(); //pulls in configuration from .env
@@ -17,6 +18,15 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { error: "Too many attempts, please try again later." },
+});
+
+app.use("/api/auth", authLimiter);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/hospital", hospitalRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));

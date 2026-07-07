@@ -6,3 +6,5 @@ build/
 *.log
 .DS_Store
 **/generated/prisma/
+backend/uploads/*
+!backend/uploads/.gitignore

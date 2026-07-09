@@ -113,3 +113,38 @@ export async function getLinkedPatients(req: AuthRequest, res: Response) {
     return res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+export async function getHospitalProfile(req: AuthRequest, res: Response) {
+  try {
+    const hospital = await prisma.hospital.findUnique({
+      where: { userId: req.user!.userId },
+      include: { user: { select: { email: true } } },
+    });
+    if (!hospital) return res.status(404).json({ error: "Hospital not found" });
+    return res.json(hospital);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}
+
+export async function updateHospitalProfile(req: AuthRequest, res: Response) {
+  try {
+    const { name, address } = req.body;
+    const hospital = await prisma.hospital.findUnique({
+      where: { userId: req.user!.userId },
+    });
+    if (!hospital) return res.status(404).json({ error: "Hospital not found" });
+    const updated = await prisma.hospital.update({
+      where: { id: hospital.id },
+      data: {
+        ...(name && { name }),
+        ...(address && { address }),
+      },
+    });
+    return res.json(updated);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}

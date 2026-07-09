@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/authMiddleware";
-import { searchPatient, linkPatient, getLinkedPatients } from "../controllers/hospitalController";
+import { searchPatient, linkPatient, getLinkedPatients, getHospitalProfile, updateHospitalProfile } from "../controllers/hospitalController";
 import { createReport, getPatientReports, editReport, getSingleReport, getAllReports } from "../controllers/reportController";
 import { upload } from "../utils/upload";
 
@@ -18,6 +18,8 @@ router.get("/reports/all", getAllReports);
 router.get("/reports/single/:reportId", getSingleReport);
 router.get("/reports/:patientId", getPatientReports);
 router.put("/reports/:reportId", upload.single("file"), editReport);
+router.get("/profile", getHospitalProfile);
+router.put("/profile", updateHospitalProfile);
 
 
 export default router;

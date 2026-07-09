@@ -177,3 +177,43 @@ export async function getSingleReport(req: AuthRequest, res: Response) {
     return res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+export async function getAllReports(req: AuthRequest, res: Response) {
+  try {
+    const hospital = await prisma.hospital.findUnique({
+      where: { userId: req.user!.userId },
+    });
+
+    if (!hospital) {
+      return res.status(404).json({ error: "Hospital not found" });
+    }
+
+    // Get all patients linked to this hospital
+    const links = await prisma.hospitalPatientLink.findMany({
+      where: { hospitalId: hospital.id },
+      select: { patientId: true },
+    });
+
+    const patientIds = links.map((l) => l.patientId);
+
+    // Get all reports for those patients
+    const reports = await prisma.report.findMany({
+      where: { patientId: { in: patientIds } },
+      include: {
+        hospital: { select: { name: true, id: true } },
+        patient: { select: { fullName: true, citizenId: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const enriched = reports.map((r) => ({
+      ...r,
+      isOwn: r.hospitalId === hospital.id,
+    }));
+
+    return res.json(enriched);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}

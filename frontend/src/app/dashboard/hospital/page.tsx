@@ -87,10 +87,23 @@ export default function HospitalDashboard() {
         <div className="flex items-center gap-8">
           <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
           <nav className="flex gap-1">
-            {["Home", "Reports", "Timeline", "Insights"].map((item) => (
-              <span key={item} className="font-heading font-semibold text-sm text-body px-3 py-1 rounded-lg hover:bg-border cursor-pointer">
-                {item}
-              </span>
+                        {[
+              { label: "Home", href: "/dashboard/hospital" },
+              { label: "Reports", href: "/dashboard/hospital/reports" },
+              { label: "Timeline", href: "/dashboard/hospital/timeline" },
+              { label: "Categories", href: "/dashboard/hospital/categories" },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`font-heading font-semibold text-sm px-3 py-1 rounded-lg transition-colors ${
+                  item.href === "/dashboard/hospital"
+                    ? "bg-mint text-accent-light"
+                    : "text-body hover:bg-border"
+                }`}
+              >
+                {item.label}
+              </Link>
             ))}
           </nav>
         </div>

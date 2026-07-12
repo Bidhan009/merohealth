@@ -132,21 +132,24 @@ export default function HospitalDashboard() {
             </div>
           </div>
           {[
-            { label: "Dashboard", active: true },
-            { label: "Settings", active: false },
-            { label: "Help Center", active: false },
-            { label: "Verification", active: false },
+            { label: "Dashboard", href: "/dashboard/hospital", active: true },
+            { label: "Search Reports", href: "/dashboard/hospital/reports", active: false },
+            { label: "Timeline", href: "/dashboard/hospital/timeline", active: false },
+            { label: "Categories", href: "/dashboard/hospital/categories", active: false },
+            { label: "Settings", href: "/dashboard/hospital/settings", active: false },
+            { label: "Help Center", href: "/dashboard/hospital/help", active: false },
           ].map((item) => (
-            <div
+            <Link
               key={item.label}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer font-heading font-semibold text-sm transition-colors ${
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-heading font-semibold text-sm transition-colors ${
                 item.active
                   ? "bg-mint text-accent-light"
                   : "text-body hover:bg-border"
               }`}
             >
               {item.label}
-            </div>
+            </Link>
           ))}
           <div className="mt-auto">
             <button className="w-full bg-danger text-white font-heading font-extrabold text-sm tracking-widest py-3 rounded-lg shadow">

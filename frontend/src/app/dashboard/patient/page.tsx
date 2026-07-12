@@ -76,11 +76,24 @@ export default function PatientDashboard() {
         <div className="flex items-center gap-8">
           <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
           <nav className="flex gap-1">
-            {["Home", "Reports", "Timeline", "Insights"].map((item) => (
-              <span key={item} className="font-heading font-semibold text-sm text-body px-3 py-1 rounded-lg hover:bg-border cursor-pointer">
-                {item}
-              </span>
-            ))}
+            {[
+                { label: "Home", href: "/dashboard/patient" },
+                { label: "Timeline", href: "/dashboard/patient/timeline" },
+                { label: "History", href: "/dashboard/patient/history" },
+                { label: "Settings", href: "/dashboard/patient/settings" },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`font-heading font-semibold text-sm px-3 py-1 rounded-lg transition-colors ${
+                    item.href === "/dashboard/patient"
+                      ? "bg-mint text-accent-light"
+                      : "text-body hover:bg-border"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
           </nav>
         </div>
         <div className="flex items-center gap-3">
@@ -110,22 +123,24 @@ export default function PatientDashboard() {
             </div>
           </div>
           {[
-            { label: "My Records", active: true },
-            { label: "Timeline", active: false },
-            { label: "Settings", active: false },
-            { label: "Help Center", active: false },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer font-heading font-semibold text-sm transition-colors ${
-                item.active
-                  ? "bg-mint text-accent-light"
-                  : "text-body hover:bg-border"
-              }`}
-            >
-              {item.label}
-            </div>
-          ))}
+              { label: "My Records", href: "/dashboard/patient", active: true },
+              { label: "Timeline", href: "/dashboard/patient/timeline", active: false },
+              { label: "Medical History", href: "/dashboard/patient/history", active: false },
+              { label: "Settings", href: "/dashboard/patient/settings", active: false },
+              { label: "Help Center", href: "/dashboard/patient/help", active: false },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-heading font-semibold text-sm transition-colors ${
+                  item.active
+                    ? "bg-mint text-accent-light"
+                    : "text-body hover:bg-border"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
           <div className="mt-auto">
             <button className="w-full bg-danger text-white font-heading font-extrabold text-sm tracking-widest py-3 rounded-lg shadow">
               Emergency ID

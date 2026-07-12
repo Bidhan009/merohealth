@@ -1,0 +1,267 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { getToken, logout } from "@/utils/auth";
+
+const FAQ = [
+  {
+    question: "How do I view my medical reports?",
+    answer: "Go to 'My Records' from the sidebar or dashboard. All your reports from every linked hospital will appear there in chronological order.",
+  },
+  {
+    question: "Can I edit or delete my medical reports?",
+    answer: "No. Patients cannot create, edit, or delete reports. Only verified hospitals can manage your medical records. This ensures the integrity and authenticity of your health data.",
+  },
+  {
+    question: "Why can't I see any reports yet?",
+    answer: "Reports appear once a hospital has linked your account and added records. Visit your registered hospital and ask them to link your MeroHealth account if you don't see any reports.",
+  },
+  {
+    question: "What is a Minor Account?",
+    answer: "If you registered under the age of 16, your account is classified as a Minor Account. A unique Minor ID (starting with MINOR-) is generated instead of a Citizen ID.",
+  },
+  {
+    question: "How do I change my password?",
+    answer: "Go to Settings from the sidebar and scroll to the 'Change Password' section. You'll need your current password to set a new one.",
+  },
+  {
+    question: "Which hospitals can see my records?",
+    answer: "Only hospitals that have formally linked your account can view your records. Each hospital can only see all reports but can only edit their own reports.",
+  },
+  {
+    question: "How do I download my medical reports?",
+    answer: "Click 'View File →' next to any report that has an attached file. This opens the file in a new tab where you can download it.",
+  },
+  {
+    question: "What is the Emergency ID?",
+    answer: "The Emergency ID card shows your critical health information (name, blood type, allergies) to emergency responders without requiring login. It's accessible via the red Emergency ID button.",
+  },
+  {
+    question: "How long does account verification take?",
+    answer: "Account verification by the Ministry of Health typically takes 1–2 business days. You'll receive an email once your account is approved or rejected.",
+  },
+  {
+    question: "Is my health data secure?",
+    answer: "Yes. All data is encrypted end-to-end and stored on government-grade secure servers. Access is logged and audited by the Department of Health.",
+  },
+];
+
+const CATEGORIES = [
+  { icon: "🚀", label: "Getting Started", desc: "Registration and setup" },
+  { icon: "📋", label: "Viewing Records", desc: "Access your health data" },
+  { icon: "🔒", label: "Privacy & Security", desc: "Data protection info" },
+  { icon: "👤", label: "Account", desc: "Profile and password" },
+  { icon: "🏥", label: "Hospitals", desc: "Hospital access and linking" },
+  { icon: "🆘", label: "Emergency", desc: "Emergency ID features" },
+];
+
+export default function PatientHelpPage() {
+  const router = useRouter();
+  const token = getToken();
+  const [search, setSearch] = useState("");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  function handleLogout() {
+    logout();
+    router.replace("/login");
+  }
+
+  const filteredFaq = FAQ.filter(
+    (f) =>
+      search.trim() === "" ||
+      f.question.toLowerCase().includes(search.toLowerCase()) ||
+      f.answer.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen bg-bg flex flex-col font-body">
+
+      {/* Header */}
+      <header className="bg-bg border-b border-border-strong px-12 py-4 flex items-center justify-between sticky top-0 z-10">
+        <div className="flex items-center gap-8">
+          <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
+          <nav className="flex gap-1">
+            {[
+              { label: "Home", href: "/dashboard/patient" },
+              { label: "Timeline", href: "/dashboard/patient/timeline" },
+              { label: "History", href: "/dashboard/patient/history" },
+              { label: "Settings", href: "/dashboard/patient/settings" },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="font-heading font-semibold text-sm px-3 py-1 rounded-lg text-body hover:bg-border transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
+            Emergency ID
+          </button>
+          <button
+            onClick={handleLogout}
+            className="border border-border-strong text-body text-sm font-semibold px-4 py-2 rounded-lg hover:border-primary transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <div className="flex flex-1">
+
+        {/* Sidebar */}
+        <aside className="w-64 bg-[#f2f4f6] border-r border-border-strong flex flex-col gap-2 p-4 min-h-full">
+          {[
+            { label: "My Records", href: "/dashboard/patient", active: false },
+            { label: "Timeline", href: "/dashboard/patient/timeline", active: false },
+            { label: "Medical History", href: "/dashboard/patient/history", active: false },
+            { label: "Settings", href: "/dashboard/patient/settings", active: false },
+            { label: "Help Center", href: "/dashboard/patient/help", active: true },
+          ].map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-heading font-semibold text-sm transition-colors ${
+                item.active
+                  ? "bg-mint text-accent-light"
+                  : "text-body hover:bg-border"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div className="mt-auto">
+            <button className="w-full bg-danger text-white font-heading font-extrabold text-sm tracking-widest py-3 rounded-lg shadow">
+              Emergency ID
+            </button>
+          </div>
+        </aside>
+
+        {/* Main */}
+        <main className="flex-1 p-6 flex flex-col gap-8">
+
+          {/* Hero */}
+          <div className="bg-primary rounded-xl p-10 flex flex-col gap-4 relative overflow-hidden">
+            <div className="absolute top-[-40px] right-[-40px] w-48 h-48 rounded-full bg-mint opacity-10 blur-2xl" />
+            <h1 className="font-heading font-bold text-4xl text-white">
+              Patient Help Center
+            </h1>
+            <p className="font-body text-white opacity-80 text-base max-w-xl">
+              Find answers about viewing your health records, account security, and using MeroHealth as a patient.
+            </p>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search help topics..."
+              className="w-full max-w-xl border-0 rounded-lg px-5 py-3 font-body text-base text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-mint bg-white"
+            />
+          </div>
+
+          {/* Category Cards */}
+          <div className="grid grid-cols-3 gap-4">
+            {CATEGORIES.map((cat) => (
+              <div
+                key={cat.label}
+                className="bg-white border border-border rounded-xl p-5 shadow-sm flex items-center gap-4 hover:border-accent transition-colors cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-xl bg-soft-blue flex items-center justify-center text-2xl shrink-0">
+                  {cat.icon}
+                </div>
+                <div>
+                  <p className="font-heading font-bold text-base text-primary">{cat.label}</p>
+                  <p className="font-body text-muted text-sm">{cat.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* FAQ */}
+          <div className="bg-white border border-border rounded-xl shadow-sm">
+            <div className="border-b border-border px-6 py-5">
+              <h2 className="font-heading font-semibold text-xl text-primary">
+                Frequently Asked Questions
+              </h2>
+            </div>
+            {filteredFaq.length === 0 ? (
+              <div className="p-12 text-center">
+                <p className="font-body text-muted text-base">
+                  No results found for "{search}"
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col divide-y divide-border">
+                {filteredFaq.map((faq, i) => (
+                  <div key={i} className="px-6 py-5">
+                    <button
+                      onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                      className="w-full flex items-center justify-between text-left gap-4"
+                    >
+                      <p className="font-heading font-semibold text-base text-primary">
+                        {faq.question}
+                      </p>
+                      <span className="text-muted text-xl shrink-0">
+                        {openIndex === i ? "−" : "+"}
+                      </span>
+                    </button>
+                    {openIndex === i && (
+                      <p className="font-body text-body text-base leading-relaxed mt-3">
+                        {faq.answer}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Contact Support */}
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { icon: "💬", label: "Live Chat", desc: "Chat with our support team", action: "Start Chat" },
+              { icon: "📧", label: "Email Support", desc: "support@merohealth.gov.np", action: "Send Email" },
+              { icon: "📞", label: "24/7 Help Desk", desc: "+977-1-XXXXXXX", action: "Call Now" },
+            ].map((channel) => (
+              <div key={channel.label} className="bg-white border border-border rounded-xl p-6 shadow-sm flex flex-col gap-3">
+                <span className="text-3xl">{channel.icon}</span>
+                <div>
+                  <p className="font-heading font-bold text-base text-primary">{channel.label}</p>
+                  <p className="font-body text-body text-sm">{channel.desc}</p>
+                </div>
+                <button className="border border-accent text-accent font-heading font-semibold text-sm px-4 py-2 rounded-lg hover:bg-accent hover:text-white transition-colors w-fit">
+                  {channel.action}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* System Status */}
+          <div className="bg-[rgba(139,241,230,0.2)] border border-accent rounded-xl px-6 py-4 flex items-center gap-3">
+            <div className="w-3 h-3 rounded-full bg-accent animate-pulse" />
+            <p className="font-heading font-semibold text-sm text-accent-light">
+              All medical systems operational
+            </p>
+            <span className="font-body text-muted text-sm ml-auto">Last checked: just now</span>
+          </div>
+        </main>
+      </div>
+
+      <footer className="bg-[#e0e3e5] border-t border-border-strong px-12 py-8 flex items-center justify-between">
+        <div>
+          <p className="font-heading font-bold text-sm text-primary">MeroHealth</p>
+          <p className="font-body text-body text-base">© 2024 MeroHealth. Verified by Ministry of Health Nepal.</p>
+        </div>
+        <div className="flex gap-6">
+          <Link href="#" className="font-heading font-semibold text-sm text-body hover:text-primary">Privacy Policy</Link>
+          <Link href="#" className="font-heading font-semibold text-sm text-body hover:text-primary">Terms of Service</Link>
+          <Link href="#" className="font-heading font-semibold text-sm text-body hover:text-primary">Legal Notice</Link>
+        </div>
+      </footer>
+    </div>
+  );
+}

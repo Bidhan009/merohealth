@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getToken, logout } from "@/utils/auth";
+import { getToken} from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
 
 interface Report {
@@ -43,12 +43,6 @@ interface Report {
         };
         load();
     }, []);
-
-    function handleLogout() {
-        logout();
-        router.replace("/login");
-    }
-
     const filtered = allReports.filter((r) => {
         const q = search.toLowerCase();
         const matchesSearch = !search.trim() ||

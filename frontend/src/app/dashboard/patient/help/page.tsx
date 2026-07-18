@@ -57,12 +57,20 @@ const CATEGORIES = [
   { icon: "🏥", label: "Hospitals", desc: "Hospital access and linking" },
   { icon: "🆘", label: "Emergency", desc: "Emergency ID features" },
 ];
+interface PatientInfo {
+  fullName: string;
+  citizenId: string;
+  isMinor: boolean;
+  dateOfBirth: string;
+  user: { email: string };
+}
 
 export default function PatientHelpPage() {
   const router = useRouter();
   const token = getToken();
   const [search, setSearch] = useState("");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [patient, setPatient] = useState<PatientInfo | null>(null);
 
   const filteredFaq = FAQ.filter(
     (f) =>
@@ -72,7 +80,7 @@ export default function PatientHelpPage() {
   );
 
   return (
-      <PatientLayout>
+      <PatientLayout patientName={patient?.fullName} citizenId={patient?.citizenId}>
         {/* Main */}
         <main className="flex-1 p-6 flex flex-col gap-8">
 

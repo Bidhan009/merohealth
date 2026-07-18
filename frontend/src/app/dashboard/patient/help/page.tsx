@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken} from "@/utils/auth";
@@ -71,6 +71,23 @@ export default function PatientHelpPage() {
   const [search, setSearch] = useState("");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [patient, setPatient] = useState<PatientInfo | null>(null);
+  const [patientName, setPatientName] = useState("");
+  const [citizenId, setCitizenId] = useState("");
+
+  useEffect(() => {
+  if (!token) { router.replace("/login"); return; }
+  const load = async () => {
+    const res = await fetch("http://localhost:5000/api/patient/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setPatientName(data.patient.fullName);
+      setCitizenId(data.patient.citizenId);
+    }
+  };
+  load();
+}, []);
 
   const filteredFaq = FAQ.filter(
     (f) =>
@@ -80,7 +97,7 @@ export default function PatientHelpPage() {
   );
 
   return (
-      <PatientLayout patientName={patient?.fullName} citizenId={patient?.citizenId}>
+      <PatientLayout patientName={patientName} citizenId={citizenId}>
         {/* Main */}
         <main className="flex-1 p-6 flex flex-col gap-8">
 

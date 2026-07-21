@@ -24,6 +24,7 @@ export default function HospitalDashboard() {
   const [searchError, setSearchError] = useState("");
   const [linkMessage, setLinkMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hospitalName, setHospitalName] = useState("");
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
@@ -38,6 +39,13 @@ export default function HospitalDashboard() {
       const data = await res.json();
       setPatients(data);
     }
+    const profileRes = await fetch("http://localhost:5000/api/hospital/profile", {
+  headers: { Authorization: `Bearer ${token}` },
+    });
+    if (profileRes.ok) {
+      const profileData = await profileRes.json();
+      setHospitalName(profileData.name);
+}
   }
 
   async function handleSearch(e: React.FormEvent) {

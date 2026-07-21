@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/utils/auth";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
 
 interface HospitalLayoutProps {
   children: React.ReactNode;
+  hospitalName?: string;
 }
 
 const NAV_ITEMS = [
@@ -24,9 +26,15 @@ const SIDEBAR_ITEMS = [
   { label: "Help Center", href: "/dashboard/hospital/help" },
 ];
 
-export default function HospitalLayout({ children }: HospitalLayoutProps) {
+export default function HospitalLayout({
+  children,
+  hospitalName,
+}: HospitalLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const { bg, text } = getAvatarColor(hospitalName ?? "Hospital");
+  const initials = getInitials(hospitalName ?? "Hospital");
 
   function handleLogout() {
     logout();
@@ -61,6 +69,10 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
           </nav>
         </div>
         <div className="flex items-center gap-3">
+          {/* Avatar in header */}
+          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm`}>
+            {initials}
+          </div>
           <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
             Emergency ID
           </button>
@@ -78,11 +90,13 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
         {/* Sidebar */}
         <aside className="w-64 bg-[#f2f4f6] border-r border-border-strong flex flex-col gap-2 p-4 min-h-full">
           <div className="flex items-center gap-3 px-2 pb-6">
-            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-heading font-bold text-sm">
-              H
+            <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-base shrink-0`}>
+              {initials}
             </div>
-            <div>
-              <p className="font-heading font-bold text-sm text-primary">Hospital Portal</p>
+            <div className="overflow-hidden">
+              <p className="font-heading font-bold text-sm text-primary truncate">
+                {hospitalName ?? "Hospital Portal"}
+              </p>
               <p className="font-body text-body text-xs">MeroHealth</p>
             </div>
           </div>
@@ -116,7 +130,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
       <footer className="bg-[#e0e3e5] border-t border-border-strong px-12 py-8 flex items-center justify-between">
         <div>
           <p className="font-heading font-bold text-sm text-primary">MeroHealth</p>
-          <p className="font-body text-body text-base">© 2026 MeroHealth. Verified by Ministry of Health Nepal.</p>
+          <p className="font-body text-body text-base">© 2024 MeroHealth. Verified by Ministry of Health Nepal.</p>
         </div>
         <div className="flex gap-6">
           <Link href="#" className="font-heading font-semibold text-sm text-body hover:text-primary">Privacy Policy</Link>

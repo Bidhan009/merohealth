@@ -12,33 +12,44 @@ export default function LoginPage() {
   const router = useRouter();
 
   async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        setLoading(false);
+    if (res.status === 403) {
+      if (data.error?.toLowerCase().includes("awaiting")) {
+        router.push("/status/pending");
         return;
       }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.role);
-      router.push("/dashboard");
-    } catch {
-      setError("Something went wrong. Please try again.");
-      setLoading(false);
+      if (data.error?.toLowerCase().includes("rejected")) {
+        router.push("/status/rejected");
+        return;
+      }
     }
+
+    if (!res.ok) {
+      setError(data.error || "Login failed");
+      setLoading(false);
+      return;
+    }
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
+    router.push("/dashboard");
+  } catch {
+    setError("Something went wrong. Please try again.");
+    setLoading(false);
   }
+}
 
   return (
     <div className="min-h-screen bg-bg flex flex-col font-body">

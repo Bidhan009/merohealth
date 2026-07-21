@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/utils/auth";
+import { getAvatarColor, getInitials } from "@/utils/avatar";
 
 interface PatientLayoutProps {
   children: React.ReactNode;
@@ -33,12 +34,13 @@ export default function PatientLayout({
   const pathname = usePathname();
   const router = useRouter();
 
+  const { bg, text } = getAvatarColor(patientName ?? "");
+  const initials = getInitials(patientName ?? "");
+
   function handleLogout() {
     logout();
     router.replace("/login");
   }
-
-  const initial = patientName?.[0]?.toUpperCase() ?? "P";
 
   return (
     <div className="min-h-screen bg-bg flex flex-col font-body">
@@ -68,6 +70,10 @@ export default function PatientLayout({
           </nav>
         </div>
         <div className="flex items-center gap-3">
+          {/* Avatar in header */}
+          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm`}>
+            {initials}
+          </div>
           <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
             Emergency ID
           </button>
@@ -85,8 +91,8 @@ export default function PatientLayout({
         {/* Sidebar */}
         <aside className="w-64 bg-[#f2f4f6] border-r border-border-strong flex flex-col gap-2 p-4 min-h-full">
           <div className="flex items-center gap-3 px-2 pb-6">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-heading font-bold text-base shrink-0">
-              {initial}
+            <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-base shrink-0`}>
+              {initials}
             </div>
             <div className="overflow-hidden">
               <p className="font-heading font-bold text-sm text-primary truncate">

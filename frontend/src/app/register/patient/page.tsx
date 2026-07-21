@@ -304,7 +304,7 @@ export default function PatientRegistrationPage() {
                   disabled={loading}
                   className="bg-primary text-white font-heading font-semibold text-base px-8 py-3 rounded-lg shadow hover:opacity-90 transition-opacity disabled:opacity-60"
                 >
-                  {loading ? "Registering..." : "Continue to Medical →"}
+                  {loading ? "Registering..." : "Create Health ID →"}
                 </button>
               </div>
             </form>

@@ -25,6 +25,7 @@ export default function HospitalDashboard() {
   const [linkMessage, setLinkMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [hospitalName, setHospitalName] = useState("");
+  
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }

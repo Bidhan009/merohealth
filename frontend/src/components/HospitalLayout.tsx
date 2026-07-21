@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { logout } from "@/utils/auth";
+import { useState, useEffect } from "react";
+import { logout, getToken } from "@/utils/auth";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
 
 interface HospitalLayoutProps {
   children: React.ReactNode;
-  hospitalName?: string;
 }
 
 const NAV_ITEMS = [
@@ -26,15 +26,28 @@ const SIDEBAR_ITEMS = [
   { label: "Help Center", href: "/dashboard/hospital/help" },
 ];
 
-export default function HospitalLayout({
-  children,
-  hospitalName,
-}: HospitalLayoutProps) {
+export default function HospitalLayout({ children }: HospitalLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const token = getToken();
+  const [hospitalName, setHospitalName] = useState("");
+
+  useEffect(() => {
+    if (!token) return;
+    const load = async () => {
+      const res = await fetch("http://localhost:5000/api/hospital/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setHospitalName(data.name);
+      }
+    };
+    load();
+  }, []);
 
   const { bg, text } = getAvatarColor(hospitalName ?? "Hospital");
-  const initials = getInitials(hospitalName ?? "Hospital");
+  const initials = getInitials(hospitalName || "Hospital");
 
   function handleLogout() {
     logout();
@@ -69,8 +82,7 @@ export default function HospitalLayout({
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          {/* Avatar in header */}
-          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm`}>
+          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm shrink-0`}>
             {initials}
           </div>
           <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
@@ -95,11 +107,12 @@ export default function HospitalLayout({
             </div>
             <div className="overflow-hidden">
               <p className="font-heading font-bold text-sm text-primary truncate">
-                {hospitalName ?? "Hospital Portal"}
+                {hospitalName || "Hospital Portal"}
               </p>
               <p className="font-body text-body text-xs">MeroHealth</p>
             </div>
           </div>
+
           {SIDEBAR_ITEMS.map((item) => (
             <Link
               key={item.label}
@@ -113,6 +126,7 @@ export default function HospitalLayout({
               {item.label}
             </Link>
           ))}
+
           <div className="mt-auto">
             <button className="w-full bg-danger text-white font-heading font-extrabold text-sm tracking-widest py-3 rounded-lg shadow">
               Request Ambulance

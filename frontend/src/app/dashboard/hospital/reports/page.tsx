@@ -65,7 +65,7 @@ interface Report {
     });
 
   return (
-    <HospitalLayout hospitalName={hospitalName}>
+    <HospitalLayout>
           {/* Page Header */}
           <div>
             <h1 className="font-heading font-bold text-3xl text-primary">Search Medical Reports</h1>

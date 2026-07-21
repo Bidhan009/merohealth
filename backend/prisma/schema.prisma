@@ -46,6 +46,7 @@ model Patient {
   isMinor     Boolean  @default(false)
   dateOfBirth DateTime
   fullName    String
+  avatarUrl String?
   reports             Report[]
   hospitalLinks       HospitalPatientLink[]
   createdAt   DateTime @default(now())
@@ -59,6 +60,7 @@ model Hospital {
   name               String
   address            String
   createdAt          DateTime  @default(now())
+  avatarUrl String?
   reports             Report[]
   patientLinks        HospitalPatientLink[]
 }

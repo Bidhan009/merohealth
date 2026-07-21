@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { logout } from "@/utils/auth";
+import { useState, useEffect } from "react";
+import { logout, getToken } from "@/utils/auth";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
 
 interface PatientLayoutProps {
   children: React.ReactNode;
-  patientName?: string;
-  citizenId?: string;
 }
 
 const NAV_ITEMS = [
@@ -26,16 +25,30 @@ const SIDEBAR_ITEMS = [
   { label: "Help Center", href: "/dashboard/patient/help" },
 ];
 
-export default function PatientLayout({
-  children,
-  patientName,
-  citizenId,
-}: PatientLayoutProps) {
+export default function PatientLayout({ children }: PatientLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const token = getToken();
+  const [patientName, setPatientName] = useState("");
+  const [citizenId, setCitizenId] = useState("");
+
+  useEffect(() => {
+    if (!token) return;
+    const load = async () => {
+      const res = await fetch("http://localhost:5000/api/patient/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPatientName(data.patient.fullName);
+        setCitizenId(data.patient.citizenId);
+      }
+    };
+    load();
+  }, []);
 
   const { bg, text } = getAvatarColor(patientName ?? "");
-  const initials = getInitials(patientName ?? "");
+  const initials = getInitials(patientName || "Patient");
 
   function handleLogout() {
     logout();
@@ -70,8 +83,7 @@ export default function PatientLayout({
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          {/* Avatar in header */}
-          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm`}>
+          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm shrink-0`}>
             {initials}
           </div>
           <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
@@ -96,13 +108,14 @@ export default function PatientLayout({
             </div>
             <div className="overflow-hidden">
               <p className="font-heading font-bold text-sm text-primary truncate">
-                {patientName ?? "Patient"}
+                {patientName || "Patient"}
               </p>
               <p className="font-body text-body text-xs truncate">
                 {citizenId ? `ID: ${citizenId}` : "Health Record"}
               </p>
             </div>
           </div>
+
           {SIDEBAR_ITEMS.map((item) => (
             <Link
               key={item.label}
@@ -116,6 +129,7 @@ export default function PatientLayout({
               {item.label}
             </Link>
           ))}
+
           <div className="mt-auto">
             <button className="w-full bg-danger text-white font-heading font-extrabold text-sm tracking-widest py-3 rounded-lg shadow">
               Emergency ID

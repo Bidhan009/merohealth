@@ -55,6 +55,7 @@ export default function HospitalHelpPage() {
   const token = getToken();
   const [search, setSearch] = useState("");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [hospitalName, setHospitalName] = useState("");
 
   const filteredFaq = FAQ.filter(
     (f) =>
@@ -62,6 +63,14 @@ export default function HospitalHelpPage() {
       f.question.toLowerCase().includes(search.toLowerCase()) ||
       f.answer.toLowerCase().includes(search.toLowerCase())
   );
+
+//   const profileRes = await fetch("http://localhost:5000/api/hospital/profile", {
+//   headers: { Authorization: `Bearer ${token}` },
+// });
+// if (profileRes.ok) {
+//   const profileData = await profileRes.json();
+//   setHospitalName(profileData.name);
+// }
 
   return (
     <HospitalLayout>

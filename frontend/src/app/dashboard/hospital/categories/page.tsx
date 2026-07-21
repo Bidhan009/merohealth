@@ -77,7 +77,7 @@ export default function ReportCategoriesPage() {
     : allReports.filter((r) => categorize(r) === selected);
 
   return (
-    <HospitalLayout hospitalName={hospitalName}>
+    <HospitalLayout>
           <div>
             <h1 className="font-heading font-bold text-3xl text-primary">Report Categories</h1>
             <p className="font-body text-body text-base mt-1">

@@ -147,4 +147,31 @@ export async function updateHospitalProfile(req: AuthRequest, res: Response) {
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
   }
+  export async function uploadHospitalAvatar(req: AuthRequest, res: Response) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const hospital = await prisma.hospital.findUnique({
+      where: { userId: req.user!.userId },
+    });
+
+    if (!hospital) {
+      return res.status(404).json({ error: "Hospital not found" });
+    }
+
+    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+
+    await prisma.hospital.update({
+      where: { id: hospital.id },
+      data: { avatarUrl },
+    });
+
+    return res.json({ avatarUrl });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}
 }

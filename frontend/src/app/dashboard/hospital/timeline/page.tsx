@@ -69,7 +69,7 @@ export default function HospitalTimelinePage() {
   }, []);
 
   return (
-    <HospitalLayout hospitalName={hospitalName}>
+    <HospitalLayout>
         {/* Main */}
           <div>
             <h1 className="font-heading font-bold text-3xl text-primary">Activity Timeline</h1>

@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 
 const uploadDir = path.join(__dirname, "../../uploads/reports");
+const avatarUploadDir = path.join(__dirname, "../../uploads/avatars");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });

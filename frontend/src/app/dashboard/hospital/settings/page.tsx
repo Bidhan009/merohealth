@@ -27,29 +27,30 @@ export default function HospitalSettingsPage() {
   const [address, setAddress] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarLoading, setAvatarLoading] = useState(false);
+  
 
   useEffect(() => {
-    if (!token) { router.replace("/login"); return; }
+  if (!token) { router.replace("/login"); return; }
 
-    const load = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/hospital/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setProfile(data);
-          setName(data.name);
-          setAddress(data.address);
-        }
-      } finally {
-        setLoading(false);
+  const load = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/hospital/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data);
+        setAvatarUrl(data.avatarUrl ?? "");
+        setName(data.name);
+        setAddress(data.address);
       }
-      setAvatarUrl(data.avatarUrl ?? "");
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    load();
-  }, []);
+  load();
+}, []);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -81,21 +82,17 @@ export default function HospitalSettingsPage() {
   const file = e.target.files?.[0];
   if (!file) return;
   setAvatarLoading(true);
-
   const formData = new FormData();
   formData.append("avatar", file);
-
   const res = await fetch("http://localhost:5000/api/hospital/avatar", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
-
   const data = await res.json();
   if (res.ok) setAvatarUrl(data.avatarUrl);
   setAvatarLoading(false);
 }
-
   function handleLogout() {
     logout();
     router.replace("/login");

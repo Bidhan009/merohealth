@@ -119,43 +119,66 @@ export default function PatientSettingsPage() {
         <div className="flex flex-col gap-6 max-w-3xl">
 
           {/* Avatar Upload */}
-          <div className="bg-white border border-border rounded-xl shadow-sm p-8">
-            <h2 className="font-heading font-semibold text-xl text-primary mb-6">
-              Profile Photo
-            </h2>
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                {avatarUrl ? (
-                  <img
-                    src={`http://localhost:5000${avatarUrl}`}
-                    alt="Patient avatar"
-                    className="w-20 h-20 rounded-full object-cover border-2 border-border"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white font-heading font-bold text-2xl border-2 border-border">
-                    {getInitials(patient?.fullName ?? "P")}
-                  </div>
-                )}
-                <label className="absolute bottom-0 right-0 w-7 h-7 bg-accent rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity border-2 border-white">
-                  <span className="text-white text-xs">✎</span>
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.webp"
-                    className="hidden"
-                    onChange={handleAvatarUpload}
-                  />
-                </label>
-              </div>
-              <div>
-                <p className="font-heading font-bold text-base text-primary">
-                  {patient?.fullName ?? "Patient"}
-                </p>
-                <p className="font-body text-muted text-sm">
-                  {avatarLoading ? "Uploading..." : "Click the pencil icon to update your photo"}
-                </p>
-              </div>
-            </div>
-          </div>
+<div className="bg-white border border-border rounded-xl shadow-sm p-8">
+  <h2 className="font-heading font-semibold text-xl text-primary mb-6">
+    Profile Photo
+  </h2>
+  <div className="flex items-start gap-8">
+    {/* Large photo display */}
+    <div className="relative shrink-0">
+      {avatarUrl ? (
+        <img
+          src={`http://localhost:5000${avatarUrl}`}
+          alt="Patient avatar"
+          className="w-40 h-48 rounded-xl object-cover border-2 border-border shadow-md"
+        />
+      ) : (
+        <div className="w-40 h-48 rounded-xl bg-primary flex items-center justify-center text-white font-heading font-bold text-5xl border-2 border-border shadow-md">
+          {getInitials(patient?.fullName ?? "P")}
+        </div>
+      )}
+      <label className="absolute bottom-2 right-2 bg-accent text-white text-xs font-semibold px-3 py-1.5 rounded-lg cursor-pointer hover:opacity-90 transition-opacity shadow flex items-center gap-1">
+        <span>✎</span> Change
+        <input
+          type="file"
+          accept=".jpg,.jpeg,.png,.webp"
+          className="hidden"
+          onChange={handleAvatarUpload}
+        />
+      </label>
+    </div>
+
+    {/* Info beside photo */}
+    <div className="flex flex-col gap-3 pt-2">
+      <div>
+        <p className="font-heading font-bold text-xl text-primary">
+          {patient?.fullName ?? "Patient"}
+        </p>
+        <p className="font-body text-body text-sm mt-1">
+          ID: {patient?.citizenId ?? "—"}
+        </p>
+        {patient?.isMinor && (
+          <span className="inline-block mt-2 text-xs font-semibold bg-soft-blue text-primary px-3 py-1 rounded-full">
+            Minor Account
+          </span>
+        )}
+      </div>
+      <div className="bg-bg border border-border rounded-lg px-4 py-3 max-w-xs">
+        <p className="font-body text-body text-sm leading-relaxed">
+          {avatarLoading
+            ? "Uploading your photo..."
+            : "Upload a clear, passport-style photo. Accepted formats: JPG, PNG, WEBP. Max size: 5MB."}
+        </p>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-accent" />
+        <p className="font-body text-muted text-xs">
+          Verified by Ministry of Health Nepal
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
           {/* Profile Info (read only) */}
           <div className="bg-white border border-border rounded-xl shadow-sm p-8">

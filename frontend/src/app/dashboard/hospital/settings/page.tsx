@@ -115,39 +115,57 @@ export default function HospitalSettingsPage() {
             <div className="flex flex-col gap-6">
 
               {/* Profile Card */}
-              {/* Avatar Upload */}
-            <div className="flex items-center gap-6 pb-6 border-b border-border mb-6">
-              <div className="relative">
-                {avatarUrl ? (
-                  <img
-                    src={`http://localhost:5000${avatarUrl}`}
-                    alt="Hospital avatar"
-                    className="w-20 h-20 rounded-full object-cover border-2 border-border"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white font-heading font-bold text-2xl border-2 border-border">
-                    {getInitials(profile?.name ?? "H")}
-                  </div>
-                )}
-                <label className="absolute bottom-0 right-0 w-7 h-7 bg-accent rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity border-2 border-white">
-                  <span className="text-white text-xs">✎</span>
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.webp"
-                    className="hidden"
-                    onChange={handleAvatarUpload}
-                  />
-                </label>
-              </div>
-              <div>
-                <p className="font-heading font-bold text-base text-primary">
-                  {profile?.name ?? "Hospital"}
-                </p>
-                <p className="font-body text-muted text-sm">
-                  {avatarLoading ? "Uploading..." : "Click the pencil icon to update your photo"}
-                </p>
-              </div>
-            </div>
+            {/* Avatar Upload */}
+<div className="flex items-start gap-8 pb-8 border-b border-border mb-2">
+  {/* Large photo display */}
+  <div className="relative shrink-0">
+    {avatarUrl ? (
+      <img
+        src={`http://localhost:5000${avatarUrl}`}
+        alt="Hospital avatar"
+        className="w-40 h-48 rounded-xl object-cover border-2 border-border shadow-md"
+      />
+    ) : (
+      <div className="w-40 h-48 rounded-xl bg-primary flex items-center justify-center text-white font-heading font-bold text-5xl border-2 border-border shadow-md">
+        {getInitials(profile?.name ?? "H")}
+      </div>
+    )}
+    <label className="absolute bottom-2 right-2 bg-accent text-white text-xs font-semibold px-3 py-1.5 rounded-lg cursor-pointer hover:opacity-90 transition-opacity shadow flex items-center gap-1">
+      <span>✎</span> Change
+      <input
+        type="file"
+        accept=".jpg,.jpeg,.png,.webp"
+        className="hidden"
+        onChange={handleAvatarUpload}
+      />
+    </label>
+  </div>
+
+  {/* Info beside photo */}
+  <div className="flex flex-col gap-3 pt-2">
+    <div>
+      <p className="font-heading font-bold text-xl text-primary">
+        {profile?.name ?? "Hospital"}
+      </p>
+      <p className="font-body text-body text-sm mt-1">
+        Reg: {profile?.registrationNumber ?? "—"}
+      </p>
+    </div>
+    <div className="bg-bg border border-border rounded-lg px-4 py-3 max-w-xs">
+      <p className="font-body text-body text-sm leading-relaxed">
+        {avatarLoading
+          ? "Uploading your photo..."
+          : "Upload your hospital's official logo or front entrance photo. Accepted: JPG, PNG, WEBP. Max: 5MB."}
+      </p>
+    </div>
+    <div className="flex items-center gap-2">
+      <div className="w-2 h-2 rounded-full bg-accent" />
+      <p className="font-body text-muted text-xs">
+        Verified by Ministry of Health Nepal
+      </p>
+    </div>
+  </div>
+</div>
               <div className="bg-white border border-border rounded-xl shadow-sm p-8">
                 <h2 className="font-heading font-semibold text-xl text-primary mb-6">
                   Hospital Profile

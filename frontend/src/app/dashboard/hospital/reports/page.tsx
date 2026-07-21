@@ -25,6 +25,7 @@ interface Report {
     const [search, setSearch] = useState("");
     const [filterOwn, setFilterOwn] = useState<"all" | "own" | "others">("all");
     const [loading, setLoading] = useState(true);
+    const [hospitalName, setHospitalName] = useState("");
 
     useEffect(() => {
         if (!token) { router.replace("/login"); return; }
@@ -39,6 +40,13 @@ interface Report {
             }
         } finally {
             setLoading(false);
+        }
+        const profileRes = await fetch("http://localhost:5000/api/hospital/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setHospitalName(profileData.name);
         }
         };
         load();
@@ -57,7 +65,7 @@ interface Report {
     });
 
   return (
-    <HospitalLayout>
+    <HospitalLayout hospitalName={hospitalName}>
           {/* Page Header */}
           <div>
             <h1 className="font-heading font-bold text-3xl text-primary">Search Medical Reports</h1>

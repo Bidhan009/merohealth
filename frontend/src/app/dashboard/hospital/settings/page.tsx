@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken, logout } from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
+import { getInitials } from "@/utils/avatar";
 
 interface HospitalProfile {
   name: string;
@@ -24,6 +25,8 @@ export default function HospitalSettingsPage() {
 
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarLoading, setAvatarLoading] = useState(false);
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
@@ -42,6 +45,7 @@ export default function HospitalSettingsPage() {
       } finally {
         setLoading(false);
       }
+      setAvatarUrl(data.avatarUrl ?? "");
     };
 
     load();
@@ -73,6 +77,24 @@ export default function HospitalSettingsPage() {
       setSaving(false);
     }
   }
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  setAvatarLoading(true);
+
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const res = await fetch("http://localhost:5000/api/hospital/avatar", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  const data = await res.json();
+  if (res.ok) setAvatarUrl(data.avatarUrl);
+  setAvatarLoading(false);
+}
 
   function handleLogout() {
     logout();
@@ -96,6 +118,39 @@ export default function HospitalSettingsPage() {
             <div className="flex flex-col gap-6">
 
               {/* Profile Card */}
+              {/* Avatar Upload */}
+            <div className="flex items-center gap-6 pb-6 border-b border-border mb-6">
+              <div className="relative">
+                {avatarUrl ? (
+                  <img
+                    src={`http://localhost:5000${avatarUrl}`}
+                    alt="Hospital avatar"
+                    className="w-20 h-20 rounded-full object-cover border-2 border-border"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-white font-heading font-bold text-2xl border-2 border-border">
+                    {getInitials(profile?.name ?? "H")}
+                  </div>
+                )}
+                <label className="absolute bottom-0 right-0 w-7 h-7 bg-accent rounded-full flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity border-2 border-white">
+                  <span className="text-white text-xs">✎</span>
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    className="hidden"
+                    onChange={handleAvatarUpload}
+                  />
+                </label>
+              </div>
+              <div>
+                <p className="font-heading font-bold text-base text-primary">
+                  {profile?.name ?? "Hospital"}
+                </p>
+                <p className="font-body text-muted text-sm">
+                  {avatarLoading ? "Uploading..." : "Click the pencil icon to update your photo"}
+                </p>
+              </div>
+            </div>
               <div className="bg-white border border-border rounded-xl shadow-sm p-8">
                 <h2 className="font-heading font-semibold text-xl text-primary mb-6">
                   Hospital Profile

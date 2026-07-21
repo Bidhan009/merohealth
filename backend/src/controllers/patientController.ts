@@ -70,31 +70,26 @@ export async function changePassword(req: AuthRequest, res: Response) {
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
   }
-  export async function uploadPatientAvatar(req: AuthRequest, res: Response) {
+}
+export async function uploadPatientAvatar(req: AuthRequest, res: Response) {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-
     const patient = await prisma.patient.findUnique({
       where: { userId: req.user!.userId },
     });
-
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
-
     const avatarUrl = `/uploads/avatars/${req.file.filename}`;
-
     await prisma.patient.update({
       where: { id: patient.id },
       data: { avatarUrl },
     });
-
     return res.json({ avatarUrl });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
   }
-}
 }

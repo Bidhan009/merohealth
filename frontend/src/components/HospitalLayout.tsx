@@ -31,20 +31,22 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
   const router = useRouter();
   const token = getToken();
   const [hospitalName, setHospitalName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    if (!token) return;
-    const load = async () => {
-      const res = await fetch("http://localhost:5000/api/hospital/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setHospitalName(data.name);
-      }
-    };
-    load();
-  }, []);
+  if (!token) return;
+  const load = async () => {
+    const res = await fetch("http://localhost:5000/api/hospital/profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setHospitalName(data.name);
+      setAvatarUrl(data.avatarUrl ?? "");
+    }
+  };
+  load();
+}, []);
 
   const { bg, text } = getAvatarColor(hospitalName ?? "Hospital");
   const initials = getInitials(hospitalName || "Hospital");

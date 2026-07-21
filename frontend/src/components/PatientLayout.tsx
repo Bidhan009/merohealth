@@ -31,21 +31,23 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
   const token = getToken();
   const [patientName, setPatientName] = useState("");
   const [citizenId, setCitizenId] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    if (!token) return;
-    const load = async () => {
-      const res = await fetch("http://localhost:5000/api/patient/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setPatientName(data.patient.fullName);
-        setCitizenId(data.patient.citizenId);
-      }
-    };
-    load();
-  }, []);
+  if (!token) return;
+  const load = async () => {
+    const res = await fetch("http://localhost:5000/api/patient/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setPatientName(data.patient.fullName);
+      setCitizenId(data.patient.citizenId);
+      setAvatarUrl(data.patient.avatarUrl ?? "");
+    }
+  };
+  load();
+}, []);
 
   const { bg, text } = getAvatarColor(patientName ?? "");
   const initials = getInitials(patientName || "Patient");

@@ -6,25 +6,28 @@ import { useState, useEffect } from "react";
 import { logout, getToken } from "@/utils/auth";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
 import { useToast } from "@/components/Toast";
+import { useLanguage } from "@/i18n/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import type { TranslationKey } from "@/i18n/translations";
 
 interface HospitalLayoutProps {
   children: React.ReactNode;
 }
 
-const NAV_ITEMS = [
-  { label: "Home", href: "/dashboard/hospital" },
-  { label: "Reports", href: "/dashboard/hospital/reports" },
-  { label: "Timeline", href: "/dashboard/hospital/timeline" },
-  { label: "Categories", href: "/dashboard/hospital/categories" },
+const NAV_ITEMS: { key: keyof TranslationKey["nav"]; href: string }[] = [
+  { key: "home", href: "/dashboard/hospital" },
+  { key: "reports", href: "/dashboard/hospital/reports" },
+  { key: "timeline", href: "/dashboard/hospital/timeline" },
+  { key: "categories", href: "/dashboard/hospital/categories" },
 ];
 
-const SIDEBAR_ITEMS = [
-  { label: "Dashboard", href: "/dashboard/hospital" },
-  { label: "Search Reports", href: "/dashboard/hospital/reports" },
-  { label: "Timeline", href: "/dashboard/hospital/timeline" },
-  { label: "Categories", href: "/dashboard/hospital/categories" },
-  { label: "Settings", href: "/dashboard/hospital/settings" },
-  { label: "Help Center", href: "/dashboard/hospital/help" },
+const SIDEBAR_ITEMS: { key: keyof TranslationKey["nav"]; href: string }[] = [
+  { key: "dashboard", href: "/dashboard/hospital" },
+  { key: "searchReports", href: "/dashboard/hospital/reports" },
+  { key: "timeline", href: "/dashboard/hospital/timeline" },
+  { key: "categories", href: "/dashboard/hospital/categories" },
+  { key: "settings", href: "/dashboard/hospital/settings" },
+  { key: "helpCenter", href: "/dashboard/hospital/help" },
 ];
 
 export default function HospitalLayout({ children }: HospitalLayoutProps) {
@@ -32,6 +35,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
   const router = useRouter();
   const token = getToken();
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [hospitalName, setHospitalName] = useState("");
 
   useEffect(() => {
@@ -71,7 +75,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
           <nav className="flex gap-1">
             {NAV_ITEMS.map((item) => (
               <Link
-                key={item.label}
+                key={item.key}
                 href={item.href}
                 className={`font-heading font-semibold text-sm px-3 py-1 rounded-lg transition-colors ${
                   pathname === item.href
@@ -79,7 +83,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
                     : "text-body hover:bg-border"
                 }`}
               >
-                {item.label}
+                {t.nav[item.key]}
               </Link>
             ))}
           </nav>
@@ -88,14 +92,15 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
           <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm shrink-0`}>
             {initials}
           </div>
+          <LanguageSwitcher />
           <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
-            Emergency ID
+            {t.nav.emergencyId}
           </button>
           <button
             onClick={handleLogout}
             className="border border-border-strong text-body text-sm font-semibold px-4 py-2 rounded-lg hover:border-primary transition-colors"
           >
-            Logout
+            {t.nav.logout}
           </button>
         </div>
       </header>
@@ -118,7 +123,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
 
           {SIDEBAR_ITEMS.map((item) => (
             <Link
-              key={item.label}
+              key={item.key}
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg font-heading font-semibold text-sm transition-colors ${
                 pathname === item.href
@@ -126,15 +131,9 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
                   : "text-body hover:bg-border"
               }`}
             >
-              {item.label}
+              {t.nav[item.key]}
             </Link>
           ))}
-
-          <div className="mt-auto">
-            <button className="w-full bg-danger text-white font-heading font-extrabold text-sm tracking-widest py-3 rounded-lg shadow">
-              Request Ambulance
-            </button>
-          </div>
         </aside>
 
         {/* Page Content */}

@@ -1,6 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/i18n/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function WelcomePage() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-bg flex flex-col font-body">
 
@@ -9,17 +15,24 @@ export default function WelcomePage() {
         <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
         <div className="flex items-center gap-4">
           <Link
+            href="/about"
+            className="font-heading font-semibold text-sm text-body hover:text-primary transition-colors"
+          >
+            {t.nav.about}
+          </Link>
+          <Link
             href="/login"
             className="font-heading font-semibold text-sm text-body hover:text-primary transition-colors"
           >
-            Sign In
+            {t.nav.signIn}
           </Link>
           <Link
             href="/register/patient"
             className="bg-primary text-white font-heading font-semibold text-sm px-5 py-2.5 rounded-lg hover:opacity-90 transition-opacity"
           >
-            Get Started
+            {t.nav.getStarted}
           </Link>
+          <LanguageSwitcher />
         </div>
       </header>
 
@@ -44,13 +57,13 @@ export default function WelcomePage() {
               href="/register/patient"
               className="bg-primary text-white font-heading font-bold text-base px-8 py-4 rounded-lg shadow-lg hover:opacity-90 transition-opacity"
             >
-              Create Health ID →
+              {t.auth.createHealthId} →
             </Link>
             <Link
               href="/login"
               className="border border-border-strong text-primary font-heading font-semibold text-base px-8 py-4 rounded-lg hover:border-primary transition-colors"
             >
-              Sign In
+              {t.nav.signIn}
             </Link>
           </div>
         </section>

@@ -6,24 +6,27 @@ import { useState, useEffect } from "react";
 import { logout, getToken } from "@/utils/auth";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
 import { useToast } from "@/components/Toast";
+import { useLanguage } from "@/i18n/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import type { TranslationKey } from "@/i18n/translations";
 
 interface PatientLayoutProps {
   children: React.ReactNode;
 }
 
-const NAV_ITEMS = [
-  { label: "Home", href: "/dashboard/patient" },
-  { label: "Timeline", href: "/dashboard/patient/timeline" },
-  { label: "History", href: "/dashboard/patient/history" },
-  { label: "Settings", href: "/dashboard/patient/settings" },
+const NAV_ITEMS: { key: keyof TranslationKey["nav"]; href: string }[] = [
+  { key: "home", href: "/dashboard/patient" },
+  { key: "timeline", href: "/dashboard/patient/timeline" },
+  { key: "history", href: "/dashboard/patient/history" },
+  { key: "settings", href: "/dashboard/patient/settings" },
 ];
 
-const SIDEBAR_ITEMS = [
-  { label: "My Records", href: "/dashboard/patient" },
-  { label: "Timeline", href: "/dashboard/patient/timeline" },
-  { label: "Medical History", href: "/dashboard/patient/history" },
-  { label: "Settings", href: "/dashboard/patient/settings" },
-  { label: "Help Center", href: "/dashboard/patient/help" },
+const SIDEBAR_ITEMS: { key: keyof TranslationKey["nav"]; href: string }[] = [
+  { key: "myRecords", href: "/dashboard/patient" },
+  { key: "timeline", href: "/dashboard/patient/timeline" },
+  { key: "history", href: "/dashboard/patient/history" },
+  { key: "settings", href: "/dashboard/patient/settings" },
+  { key: "helpCenter", href: "/dashboard/patient/help" },
 ];
 
 export default function PatientLayout({ children }: PatientLayoutProps) {
@@ -31,6 +34,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
   const router = useRouter();
   const token = getToken();
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [patientName, setPatientName] = useState("");
   const [citizenId, setCitizenId] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -74,7 +78,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
           <nav className="flex gap-1">
             {NAV_ITEMS.map((item) => (
               <Link
-                key={item.label}
+                key={item.key}
                 href={item.href}
                 className={`font-heading font-semibold text-sm px-3 py-1 rounded-lg transition-colors ${
                   pathname === item.href
@@ -82,7 +86,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
                     : "text-body hover:bg-border"
                 }`}
               >
-                {item.label}
+                {t.nav[item.key]}
               </Link>
             ))}
           </nav>
@@ -99,14 +103,15 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
                 {initials}
               </div>
             )}
+          <LanguageSwitcher />
           <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
-            Emergency ID
+            {t.nav.emergencyId}
           </button>
           <button
             onClick={handleLogout}
             className="border border-border-strong text-body text-sm font-semibold px-4 py-2 rounded-lg hover:border-primary transition-colors"
           >
-            Logout
+            {t.nav.logout}
           </button>
         </div>
       </header>
@@ -139,7 +144,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
 
           {SIDEBAR_ITEMS.map((item) => (
             <Link
-              key={item.label}
+              key={item.key}
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg font-heading font-semibold text-sm transition-colors ${
                 pathname === item.href
@@ -147,15 +152,9 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
                   : "text-body hover:bg-border"
               }`}
             >
-              {item.label}
+              {t.nav[item.key]}
             </Link>
           ))}
-
-          <div className="mt-auto">
-            <button className="w-full bg-danger text-white font-heading font-extrabold text-sm tracking-widest py-3 rounded-lg shadow">
-              Emergency ID
-            </button>
-          </div>
         </aside>
 
         {/* Page Content */}

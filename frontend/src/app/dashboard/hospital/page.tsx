@@ -7,6 +7,7 @@ import { getToken } from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
 import { SkeletonCard } from "@/components/Skeleton";
 import { useToast } from "@/components/Toast";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Patient {
   id: string;
@@ -21,6 +22,7 @@ export default function HospitalDashboard() {
   const router = useRouter();
   const token = getToken();
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [searchId, setSearchId] = useState("");
   const [searchResult, setSearchResult] = useState<Patient | null>(null);
@@ -61,19 +63,26 @@ export default function HospitalDashboard() {
 
   async function handleLink() {
     if (!searchResult) return;
+    const linkedPatient = searchResult;
+    setPatients((prev) => [...prev, linkedPatient]);
+    setSearchResult(null);
+    setSearchId("");
+
     const res = await fetch("http://localhost:5000/api/hospital/patients/link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ patientId: searchResult.id }),
+      body: JSON.stringify({ patientId: linkedPatient.id }),
     });
     const data = await res.json();
-    if (!res.ok) { showToast(data.error, "error"); return; }
+    if (!res.ok) {
+      setPatients((prev) => prev.filter((p) => p.id !== linkedPatient.id));
+      showToast(data.error || "Failed to link patient", "error");
+      return;
+    }
     showToast("Patient linked successfully!", "success");
-    setSearchResult(null);
-    setSearchId("");
     fetchPatients();
   }
 
@@ -83,9 +92,9 @@ export default function HospitalDashboard() {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="font-heading font-bold text-3xl text-primary">Hospital Dashboard</h1>
+            <h1 className="font-heading font-bold text-3xl text-primary">{t.dashboard.hospitalDashboard}</h1>
             <span className="bg-green-100 border border-green-200 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
-              ✓ Verified Hospital
+              ✓ {t.dashboard.verifiedHospital}
             </span>
           </div>
           <p className="font-body text-body text-base mt-1">
@@ -102,7 +111,7 @@ export default function HospitalDashboard() {
           </>
         ):(
         [
-          { label: "Total Patients", value: patients.length, badge: "Active", badgeColor: "text-green-700 bg-green-100" },
+          { label: t.dashboard.totalPatients, value: patients.length, badge: "Active", badgeColor: "text-green-700 bg-green-100" },
           { label: "Reports This Month", value: "—", badge: "Monthly", badgeColor: "text-body bg-[#e6e8ea]" },
           { label: "Added Today", value: "—", badge: "Today", badgeColor: "text-body bg-[#e6e8ea]" },
           { label: "Pending Edits", value: "—", badge: "Action Needed", badgeColor: "text-danger bg-soft-red" },
@@ -131,7 +140,7 @@ export default function HospitalDashboard() {
         {/* Search Section */}
         <div className="col-span-2 bg-white border border-border rounded-xl shadow-sm flex flex-col">
           <div className="border-b border-border px-6 py-5">
-            <h2 className="font-heading font-semibold text-2xl text-primary">Search & Link Patient</h2>
+            <h2 className="font-heading font-semibold text-2xl text-primary">{t.dashboard.searchAndLinkPatient}</h2>
           </div>
           <div className="p-6 flex flex-col gap-4">
             <form onSubmit={handleSearch} className="flex gap-3">
@@ -147,7 +156,7 @@ export default function HospitalDashboard() {
                 disabled={loading}
                 className="bg-primary text-white font-heading font-semibold text-sm px-6 py-3 rounded-lg hover:opacity-90 disabled:opacity-60"
               >
-                {loading ? "Searching..." : "Search"}
+                {loading ? t.common.loading : t.common.search}
               </button>
             </form>
 
@@ -170,7 +179,7 @@ export default function HospitalDashboard() {
                   onClick={handleLink}
                   className="bg-accent text-white font-heading font-semibold text-sm px-6 py-3 rounded-lg hover:opacity-90"
                 >
-                  Link Patient
+                  {t.dashboard.linkPatient}
                 </button>
               </div>
             )}
@@ -179,7 +188,7 @@ export default function HospitalDashboard() {
           {/* Linked Patients */}
           <div className="border-t border-border px-6 py-5">
             <h3 className="font-heading font-semibold text-lg text-primary mb-4">
-              Linked Patients ({patients.length})
+              {t.dashboard.linkedPatients} ({patients.length})
             </h3>
             {patients.length === 0 ? (
               <p className="font-body text-muted text-base">

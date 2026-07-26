@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getToken } from "@/utils/auth";
 import { useToast } from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function EditReportPage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function EditReportPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
+  const [showReplaceConfirm, setShowReplaceConfirm] = useState(false);
   const token = getToken();
 
   useEffect(() => {
@@ -37,8 +39,7 @@ export default function EditReportPage() {
     load();
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function submitReport() {
     setLoading(true);
 
     const formData = new FormData();
@@ -61,6 +62,12 @@ export default function EditReportPage() {
     if (!res.ok) { showToast(data.error || "Failed to update report", "error"); return; }
     showToast("Report updated successfully!", "success");
     router.back();
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (file) { setShowReplaceConfirm(true); return; }
+    submitReport();
   }
 
   if (fetching) {
@@ -139,6 +146,19 @@ export default function EditReportPage() {
           </form>
         </div>
       </main>
+      <ConfirmDialog
+        isOpen={showReplaceConfirm}
+        title="Replace report file?"
+        message="Replace the existing report file? The current file will no longer be accessible."
+        confirmLabel="Replace File"
+        cancelLabel="Cancel"
+        variant="danger"
+        onCancel={() => setShowReplaceConfirm(false)}
+        onConfirm={() => {
+          setShowReplaceConfirm(false);
+          submitReport();
+        }}
+      />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
 import { SkeletonListItem } from "@/components/Skeleton";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface Report {
   id: string;
@@ -24,6 +25,7 @@ interface Report {
 
     const [allReports, setAllReports] = useState<Report[]>([]);
     const [search, setSearch] = useState("");
+    const debouncedSearch = useDebounce(search, 300);
     const [filterOwn, setFilterOwn] = useState<"all" | "own" | "others">("all");
     const [loading, setLoading] = useState(true);
 
@@ -45,8 +47,8 @@ interface Report {
         load();
     }, []);
     const filtered = allReports.filter((r) => {
-        const q = search.toLowerCase();
-        const matchesSearch = !search.trim() ||
+        const q = debouncedSearch.toLowerCase();
+        const matchesSearch = !debouncedSearch.trim() ||
         r.title.toLowerCase().includes(q) ||
         r.patient.fullName.toLowerCase().includes(q) ||
         r.patient.citizenId.toLowerCase().includes(q);

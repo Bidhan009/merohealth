@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Public_Sans, Atkinson_Hyperlegible_Next } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 
 const publicSans = Public_Sans({
   subsets: ["latin"],
@@ -32,7 +33,9 @@ export default function RootLayout({
       className={`${publicSans.variable} ${atkinson.variable} antialiased`}
     >
       <body className={`${publicSans.variable} ${atkinson.variable} antialiased`}>
-        <ToastProvider>{children}</ToastProvider>
+        <LanguageProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

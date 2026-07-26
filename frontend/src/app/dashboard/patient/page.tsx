@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getToken } from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { SkeletonCard, SkeletonListItem } from "@/components/Skeleton";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Report {
   id: string;
@@ -25,6 +26,7 @@ interface PatientInfo {
 export default function PatientDashboard() {
   const router = useRouter();
   const token = getToken();
+  const { t } = useLanguage();
   const [reports, setReports] = useState<Report[]>([]);
   const [patient, setPatient] = useState<PatientInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +77,7 @@ export default function PatientDashboard() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="font-heading font-bold text-3xl text-primary">
-            Welcome, {patient?.fullName?.split(" ")[0] ?? "Patient"}
+            {t.dashboard.welcome}, {patient?.fullName?.split(" ")[0] ?? "Patient"}
           </h1>
           <p className="font-body text-body text-base mt-1">
             Your verified medical records across all hospitals.
@@ -83,7 +85,7 @@ export default function PatientDashboard() {
         </div>
         {patient?.isMinor && (
           <span className="bg-soft-blue text-primary text-sm font-semibold px-4 py-2 rounded-full">
-            Minor Account
+            {t.settings.minorAccount}
           </span>
         )}
       </div>
@@ -92,19 +94,19 @@ export default function PatientDashboard() {
       <div className="grid grid-cols-3 gap-6">
         {[
           {
-            label: "Total Reports",
+            label: t.dashboard.totalReports,
             value: reports.length,
             badge: "All time",
             color: "bg-soft-blue text-primary",
           },
           {
-            label: "Hospitals",
+            label: t.dashboard.hospitals,
             value: [...new Set(reports.map((r) => r.hospital.name))].length,
             badge: "Linked",
             color: "bg-[rgba(139,241,230,0.3)] text-accent-light",
           },
           {
-            label: "Latest Report",
+            label: t.dashboard.latestReport,
             value: reports.length > 0
               ? new Date(reports[0].createdAt).toLocaleDateString("en-GB", {
                   day: "numeric", month: "short",
@@ -134,7 +136,7 @@ export default function PatientDashboard() {
       {/* Reports List */}
       <div className="bg-white border border-border rounded-xl shadow-sm">
         <div className="border-b border-border px-6 py-5 flex items-center justify-between">
-          <h2 className="font-heading font-semibold text-2xl text-primary">Medical Reports</h2>
+          <h2 className="font-heading font-semibold text-2xl text-primary">{t.dashboard.medicalReports}</h2>
           <span className="font-body text-muted text-sm">Read only — managed by your hospitals</span>
         </div>
 
@@ -145,7 +147,7 @@ export default function PatientDashboard() {
         {reports.length === 0 ? (
           <div className="p-12 flex flex-col items-center gap-4 text-center">
             <span className="text-5xl">📋</span>
-            <p className="font-heading font-semibold text-xl text-primary">No reports yet</p>
+            <p className="font-heading font-semibold text-xl text-primary">{t.dashboard.noReportsYet}</p>
             <p className="font-body text-body text-base max-w-sm">
               Your medical reports will appear here once a hospital adds them to your profile.
             </p>
@@ -183,7 +185,7 @@ export default function PatientDashboard() {
                     rel="noopener noreferrer"
                     className="font-heading font-semibold text-sm text-accent hover:underline shrink-0 mt-1"
                   >
-                    View File →
+                    {t.common.viewFile} →
                   </a>
                 )}
               </div>
@@ -194,7 +196,7 @@ export default function PatientDashboard() {
 
       {/* Security Notice */}
       <div className="bg-[rgba(139,241,230,0.2)] border-l-4 border-accent rounded-xl px-7 py-5 flex flex-col gap-2">
-        <p className="font-heading font-semibold text-sm text-accent-light">Your Data is Protected</p>
+        <p className="font-heading font-semibold text-sm text-accent-light">{t.dashboard.yourDataIsProtected}</p>
         <p className="font-body text-body text-base leading-relaxed">
           All records are encrypted and access is logged by the Ministry of Health. You can only view your records — only verified hospitals can add or edit reports.
         </p>

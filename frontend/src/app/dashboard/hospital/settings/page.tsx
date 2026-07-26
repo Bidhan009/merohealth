@@ -7,6 +7,7 @@ import HospitalLayout from "@/components/HospitalLayout";
 import { getInitials } from "@/utils/avatar";
 import { Skeleton } from "@/components/Skeleton";
 import { useToast } from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface HospitalProfile {
   name: string;
@@ -27,7 +28,7 @@ export default function HospitalSettingsPage() {
   const [address, setAddress] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarLoading, setAvatarLoading] = useState(false);
-  
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
   if (!token) { router.replace("/login"); return; }
@@ -254,7 +255,7 @@ export default function HospitalSettingsPage() {
                   These actions are irreversible. Please be certain before proceeding.
                 </p>
                 <button
-                  onClick={handleLogout}
+                  onClick={() => setShowLogoutConfirm(true)}
                   className="border border-danger text-danger font-heading font-semibold text-sm px-6 py-3 rounded-lg hover:bg-soft-red transition-colors"
                 >
                   Sign Out of All Devices
@@ -262,6 +263,19 @@ export default function HospitalSettingsPage() {
               </div>
             </div>
           )}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Sign out of all devices?"
+        message="You will be signed out of MeroHealth on all devices and will need to log in again."
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        variant="danger"
+        onCancel={() => setShowLogoutConfirm(false)}
+        onConfirm={() => {
+          setShowLogoutConfirm(false);
+          handleLogout();
+        }}
+      />
     </HospitalLayout>
   );
 }

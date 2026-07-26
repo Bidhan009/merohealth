@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
+import { useLanguage } from "@/i18n/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,6 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
+  const { t } = useLanguage();
 
   async function handleLogin(e: React.FormEvent) {
   e.preventDefault();
@@ -60,9 +63,12 @@ export default function LoginPage() {
       {/* Header */}
       <header className="bg-bg border-b border-border-strong px-12 py-4 flex items-center justify-between">
         <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
-        <button className="bg-danger text-white text-sm font-semibold px-4 py-2 rounded-lg">
-          Emergency ID
-        </button>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
+          <button className="bg-danger text-white text-sm font-semibold px-4 py-2 rounded-lg">
+            {t.nav.emergencyId}
+          </button>
+        </div>
       </header>
 
       {/* Main */}
@@ -75,10 +81,10 @@ export default function LoginPage() {
             {/* Heading */}
             <div>
               <h1 className="font-heading font-bold text-3xl text-primary leading-tight">
-                Welcome Back
+                {t.auth.welcomeBack}
               </h1>
               <p className="text-body text-base mt-2">
-                Access your digital health records and verified services.
+                {t.auth.loginSubtitle}
               </p>
             </div>
 
@@ -88,7 +94,7 @@ export default function LoginPage() {
               {/* Email */}
               <div className="flex flex-col gap-2">
                 <label className="font-heading font-semibold text-sm text-primary">
-                  Email
+                  {t.auth.email}
                 </label>
                 <input
                   type="email"
@@ -103,7 +109,7 @@ export default function LoginPage() {
               {/* Password */}
               <div className="flex flex-col gap-2">
                 <label className="font-heading font-semibold text-sm text-primary">
-                  Password
+                  {t.auth.password}
                 </label>
                 <input
                   type="password"
@@ -121,7 +127,7 @@ export default function LoginPage() {
                   href="#"
                   className="text-sm font-semibold text-accent hover:underline"
                 >
-                  Forgot password?
+                  {t.auth.forgotPassword}
                 </Link>
               </div>
 
@@ -138,24 +144,24 @@ export default function LoginPage() {
                 disabled={loading}
                 className="bg-primary text-white font-heading font-semibold text-lg py-4 rounded-lg shadow-md hover:opacity-90 transition-opacity disabled:opacity-60"
               >
-                {loading ? "Signing in..." : "Secure Login"}
+                {loading ? t.auth.signingIn : t.auth.secureLogin}
               </button>
             </form>
 
             {/* Divider + register link */}
             <div className="border-t border-border-strong pt-8 flex flex-col items-center gap-4">
-              <p className="text-body text-base">New to MeroHealth?</p>
+              <p className="text-body text-base">{t.auth.newToMeroHealth}</p>
               <Link
                 href="/register/patient"
                 className="border border-accent text-accent font-heading font-bold text-sm px-6 py-2 rounded-full hover:bg-accent hover:text-white transition-colors"
               >
-                Create National Health ID
+                {t.auth.createHealthId}
               </Link>
               <Link
                 href="/register/hospital"
                 className="text-muted text-sm hover:text-accent transition-colors"
               >
-                Register as a Hospital →
+                {t.auth.registerAsHospital} →
               </Link>
             </div>
           </div>

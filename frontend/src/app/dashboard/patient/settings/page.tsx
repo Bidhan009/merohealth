@@ -8,6 +8,7 @@ import { getInitials } from "@/utils/avatar";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
 import { Skeleton } from "@/components/Skeleton";
 import { useToast } from "@/components/Toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface PatientInfo {
   fullName: string;
@@ -30,6 +31,7 @@ export default function PatientSettingsPage() {
   const [pwLoading, setPwLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
@@ -318,7 +320,7 @@ export default function PatientSettingsPage() {
               Sign out from all active sessions on this device.
             </p>
             <button
-              onClick={() => { showToast("You have been logged out successfully.", "info"); localStorage.clear(); router.replace("/login"); }}
+              onClick={() => setShowLogoutConfirm(true)}
               className="border border-danger text-danger font-heading font-semibold text-sm px-6 py-3 rounded-lg hover:bg-soft-red transition-colors"
             >
               Sign Out
@@ -326,6 +328,21 @@ export default function PatientSettingsPage() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Sign out of MeroHealth?"
+        message="You'll need to sign in again to access your health records on this device."
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        variant="danger"
+        onCancel={() => setShowLogoutConfirm(false)}
+        onConfirm={() => {
+          setShowLogoutConfirm(false);
+          showToast("You have been logged out successfully.", "info");
+          localStorage.clear();
+          router.replace("/login");
+        }}
+      />
     </PatientLayout>
   );
 }

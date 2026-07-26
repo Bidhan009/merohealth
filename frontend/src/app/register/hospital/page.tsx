@@ -138,7 +138,13 @@ export default function HospitalRegistrationPage() {
 
       {/* Header */}
       <header className="bg-bg border-b border-border-strong px-12 py-4 flex items-center justify-between">
-        <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
+        <Link
+          href="/"
+          className="font-heading font-bold text-2xl text-primary hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg"
+          aria-label="MeroHealth home"
+        >
+          MeroHealth
+        </Link>
         <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
           Emergency ID
         </button>

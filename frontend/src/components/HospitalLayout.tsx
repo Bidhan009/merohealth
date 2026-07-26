@@ -67,10 +67,12 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
       {/* Header */}
       <header className="bg-bg border-b border-border-strong px-12 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-8">
-          <Link href="/dashboard/hospital">
-            <span className="font-heading font-bold text-2xl text-primary cursor-pointer">
-              MeroHealth
-            </span>
+          <Link
+            href="/dashboard/hospital"
+            className="font-heading font-bold text-2xl text-primary hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg"
+            aria-label="MeroHealth home"
+          >
+            MeroHealth
           </Link>
           <nav className="flex gap-1">
             {NAV_ITEMS.map((item) => (

@@ -12,7 +12,13 @@ export default function WelcomePage() {
 
       {/* Header */}
       <header className="bg-bg border-b border-border-strong px-12 py-4 flex items-center justify-between">
-        <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
+        <Link
+          href="/"
+          className="font-heading font-bold text-2xl text-primary hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg"
+          aria-label="MeroHealth home"
+        >
+          MeroHealth
+        </Link>
         <div className="flex items-center gap-4">
           <Link
             href="/about"

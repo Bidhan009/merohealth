@@ -4,7 +4,13 @@ export default function PendingStatusPage() {
   return (
     <div className="min-h-screen bg-bg flex flex-col font-body">
       <header className="bg-bg border-b border-border-strong px-12 py-4">
-        <span className="font-heading font-bold text-2xl text-primary">MeroHealth</span>
+        <Link
+          href="/"
+          className="font-heading font-bold text-2xl text-primary hover:text-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded-lg"
+          aria-label="MeroHealth home"
+        >
+          MeroHealth
+        </Link>
       </header>
 
       <main className="flex-1 flex items-center justify-center px-6 py-16">

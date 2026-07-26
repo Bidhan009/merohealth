@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { logout, getToken } from "@/utils/auth";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
+import { useToast } from "@/components/Toast";
 
 interface PatientLayoutProps {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const token = getToken();
+  const { showToast } = useToast();
   const [patientName, setPatientName] = useState("");
   const [citizenId, setCitizenId] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -53,6 +55,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
   const initials = getInitials(patientName || "Patient");
 
   function handleLogout() {
+    showToast("You have been logged out successfully.", "info");
     logout();
     router.replace("/login");
   }

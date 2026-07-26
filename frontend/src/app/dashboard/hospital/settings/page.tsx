@@ -92,6 +92,7 @@ export default function HospitalSettingsPage() {
   setAvatarLoading(false);
 }
   function handleLogout() {
+    showToast("You have been logged out successfully.", "info");
     logout();
     router.replace("/login");
   }

@@ -318,7 +318,7 @@ export default function PatientSettingsPage() {
               Sign out from all active sessions on this device.
             </p>
             <button
-              onClick={() => { localStorage.clear(); router.replace("/login"); }}
+              onClick={() => { showToast("You have been logged out successfully.", "info"); localStorage.clear(); router.replace("/login"); }}
               className="border border-danger text-danger font-heading font-semibold text-sm px-6 py-3 rounded-lg hover:bg-soft-red transition-colors"
             >
               Sign Out

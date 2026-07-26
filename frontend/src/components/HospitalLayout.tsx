@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { logout, getToken } from "@/utils/auth";
 import { getAvatarColor, getInitials } from "@/utils/avatar";
+import { useToast } from "@/components/Toast";
 
 interface HospitalLayoutProps {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const token = getToken();
+  const { showToast } = useToast();
   const [hospitalName, setHospitalName] = useState("");
 
   useEffect(() => {
@@ -50,6 +52,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
   const initials = getInitials(hospitalName || "Hospital");
 
   function handleLogout() {
+    showToast("You have been logged out successfully.", "info");
     logout();
     router.replace("/login");
   }

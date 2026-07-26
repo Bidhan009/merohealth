@@ -4,6 +4,8 @@ import {
   getMyRecords,
   changePassword,
   uploadPatientAvatar,
+  getEmergencyInfo,
+  updateEmergencyInfo,
 } from "../controllers/patientController";
 import { uploadAvatar } from "../utils/upload";
 
@@ -15,5 +17,7 @@ router.use(requireRole("PATIENT"));
 router.get("/me", getMyRecords);
 router.put("/change-password", changePassword);
 router.post("/avatar", uploadAvatar.single("avatar"), uploadPatientAvatar);
+router.get("/emergency", getEmergencyInfo);
+router.put("/emergency", updateEmergencyInfo);
 
 export default router;

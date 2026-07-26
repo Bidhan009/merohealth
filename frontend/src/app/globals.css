@@ -64,3 +64,10 @@ body {
   color: var(--color-body);
   background-color: var(--color-bg);
 }
+
+@media print {
+  body * { visibility: hidden; }
+  .print-card, .print-card * { visibility: visible; }
+  .print-card { position: absolute; left: 0; top: 0; width: 100%; }
+  .no-print { display: none !important; }
+}

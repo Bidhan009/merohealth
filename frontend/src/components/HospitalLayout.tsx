@@ -95,9 +95,6 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
             {initials}
           </div>
           <LanguageSwitcher />
-          <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
-            {t.nav.emergencyId}
-          </button>
           <button
             onClick={handleLogout}
             className="border border-border-strong text-body text-sm font-semibold px-4 py-2 rounded-lg hover:border-primary transition-colors"

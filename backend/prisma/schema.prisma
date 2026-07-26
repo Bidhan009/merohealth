@@ -47,6 +47,15 @@ model Patient {
   dateOfBirth DateTime
   fullName    String
   avatarUrl String?
+  bloodType         String?
+  allergies         String?
+  chronicConditions String?
+  medications       String?
+  emergencyName     String?
+  emergencyPhone    String?
+  emergencyRelation String?
+  organDonor        Boolean  @default(false)
+  emergencyUpdatedAt DateTime?
   reports             Report[]
   hospitalLinks       HospitalPatientLink[]
   createdAt   DateTime @default(now())

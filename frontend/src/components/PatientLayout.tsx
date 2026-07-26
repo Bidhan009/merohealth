@@ -25,6 +25,7 @@ const SIDEBAR_ITEMS: { key: keyof TranslationKey["nav"]; href: string }[] = [
   { key: "myRecords", href: "/dashboard/patient" },
   { key: "timeline", href: "/dashboard/patient/timeline" },
   { key: "history", href: "/dashboard/patient/history" },
+  { key: "emergencyId", href: "/dashboard/patient/emergency" },
   { key: "settings", href: "/dashboard/patient/settings" },
   { key: "helpCenter", href: "/dashboard/patient/help" },
 ];
@@ -68,7 +69,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
     <div className="min-h-screen bg-bg flex flex-col font-body">
 
       {/* Header */}
-      <header className="bg-bg border-b border-border-strong px-12 py-4 flex items-center justify-between sticky top-0 z-10">
+      <header className="no-print bg-bg border-b border-border-strong px-12 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-8">
           <Link
             href="/dashboard/patient"
@@ -106,9 +107,12 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
               </div>
             )}
           <LanguageSwitcher />
-          <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
+          <Link
+            href="/dashboard/patient/emergency"
+            className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg"
+          >
             {t.nav.emergencyId}
-          </button>
+          </Link>
           <button
             onClick={handleLogout}
             className="border border-border-strong text-body text-sm font-semibold px-4 py-2 rounded-lg hover:border-primary transition-colors"
@@ -121,7 +125,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
       <div className="flex flex-1">
 
         {/* Sidebar */}
-        <aside className="w-64 bg-[#f2f4f6] border-r border-border-strong flex flex-col gap-2 p-4 min-h-full">
+        <aside className="no-print w-64 bg-[#f2f4f6] border-r border-border-strong flex flex-col gap-2 p-4 min-h-full">
           <div className="flex items-center gap-3 px-2 pb-6">
             {avatarUrl ? (
                 <img
@@ -166,7 +170,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
       </div>
 
       {/* Footer */}
-      <footer className="bg-[#e0e3e5] border-t border-border-strong px-12 py-8 flex items-center justify-between">
+      <footer className="no-print bg-[#e0e3e5] border-t border-border-strong px-12 py-8 flex items-center justify-between">
         <div>
           <p className="font-heading font-bold text-sm text-primary">MeroHealth</p>
           <p className="font-body text-body text-base">© 2026 MeroHealth. Verified by Ministry of Health Nepal.</p>

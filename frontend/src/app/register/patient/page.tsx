@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
+import { useToast } from "@/components/Toast";
 
 export default function PatientRegistrationPage() {
+  const { showToast } = useToast();
   const [fullName, setFullName] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [citizenId, setCitizenId] = useState("");
@@ -63,9 +65,10 @@ export default function PatientRegistrationPage() {
       return;
     }
 
+    showToast("Registration submitted! Awaiting Ministry approval.", "success");
     router.push("/register/patient/pending");
   } catch {
-    setError("Something went wrong. Please try again.");
+    showToast("Something went wrong. Please try again.", "error");
     setLoading(false);
   }
 }

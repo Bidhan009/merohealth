@@ -70,10 +70,7 @@ export default function PatientDashboard() {
   }
 
   return (
-    <PatientLayout
-      patientName={patient?.fullName}
-      citizenId={patient?.citizenId}
-    >
+    <PatientLayout>
       {/* Welcome Header */}
       <div className="flex items-start justify-between">
         <div>

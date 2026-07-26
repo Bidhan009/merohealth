@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useToast } from "@/components/Toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { showToast } = useToast();
 
   async function handleLogin(e: React.FormEvent) {
   e.preventDefault();
@@ -44,9 +46,10 @@ export default function LoginPage() {
 
     localStorage.setItem("token", data.token);
     localStorage.setItem("role", data.role);
+    showToast("Logged in successfully!", "success");
     router.push("/dashboard");
   } catch {
-    setError("Something went wrong. Please try again.");
+    showToast("Something went wrong. Please try again.", "error");
     setLoading(false);
   }
 }

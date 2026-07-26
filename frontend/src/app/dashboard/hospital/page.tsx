@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken } from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
-import { SkeletonCard, SkeletonListItem } from "@/components/Skeleton";
+import { SkeletonCard } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 interface Patient {
   id: string;
@@ -19,13 +20,12 @@ interface Patient {
 export default function HospitalDashboard() {
   const router = useRouter();
   const token = getToken();
+  const { showToast } = useToast();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [searchId, setSearchId] = useState("");
   const [searchResult, setSearchResult] = useState<Patient | null>(null);
   const [searchError, setSearchError] = useState("");
-  const [linkMessage, setLinkMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [hospitalName, setHospitalName] = useState("");
   const [initialLoading, setInitialLoading] = useState(true);
   
 
@@ -42,20 +42,12 @@ export default function HospitalDashboard() {
       const data = await res.json();
       setPatients(data);
     }
-    const profileRes = await fetch("http://localhost:5000/api/hospital/profile", {
-  headers: { Authorization: `Bearer ${token}` },
-    });
-    if (profileRes.ok) {
-      const profileData = await profileRes.json();
-      setHospitalName(profileData.name);
-}
   }
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     setSearchError("");
     setSearchResult(null);
-    setLinkMessage("");
     setLoading(true);
     const res = await fetch(
       `http://localhost:5000/api/hospital/patients/search?citizenId=${searchId}`,
@@ -69,7 +61,6 @@ export default function HospitalDashboard() {
 
   async function handleLink() {
     if (!searchResult) return;
-    setLinkMessage("");
     const res = await fetch("http://localhost:5000/api/hospital/patients/link", {
       method: "POST",
       headers: {
@@ -79,8 +70,8 @@ export default function HospitalDashboard() {
       body: JSON.stringify({ patientId: searchResult.id }),
     });
     const data = await res.json();
-    if (!res.ok) { setLinkMessage(data.error); return; }
-    setLinkMessage("Patient linked successfully!");
+    if (!res.ok) { showToast(data.error, "error"); return; }
+    showToast("Patient linked successfully!", "success");
     setSearchResult(null);
     setSearchId("");
     fetchPatients();
@@ -163,11 +154,6 @@ export default function HospitalDashboard() {
             {searchError && (
               <div className="bg-soft-red text-danger text-sm font-semibold px-4 py-3 rounded-lg">
                 {searchError}
-              </div>
-            )}
-            {linkMessage && (
-              <div className="bg-[rgba(139,241,230,0.3)] text-accent-light text-sm font-semibold px-4 py-3 rounded-lg">
-                {linkMessage}
               </div>
             )}
             {searchResult && (

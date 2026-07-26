@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { SkeletonListItem } from "@/components/Skeleton";
@@ -81,7 +80,7 @@ export default function PatientHistoryPage() {
   const hospitals = [...new Set(reports.map((r) => r.hospital.name))];
 
   return (
-      <PatientLayout patientName={patient?.fullName} citizenId={patient?.citizenId}>
+      <PatientLayout>
         {/* Main */}
         <main className="flex-1 p-6 flex flex-col gap-6">
           <div className="flex items-start justify-between">

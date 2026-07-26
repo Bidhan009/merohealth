@@ -37,7 +37,7 @@ export default function WelcomePage() {
             <span className="text-accent">Secured & Unified.</span>
           </h1>
           <p className="font-body text-body text-xl leading-relaxed max-w-2xl">
-            MeroHealth is Nepal's national digital health record platform. Access your verified medical history across all hospitals — anytime, anywhere.
+            MeroHealth is Nepal&apos;s national digital health record platform. Access your verified medical history across all hospitals — anytime, anywhere.
           </p>
           <div className="flex items-center gap-4">
             <Link
@@ -74,7 +74,7 @@ export default function WelcomePage() {
         {/* Features */}
         <section className="px-12 py-20 max-w-5xl mx-auto w-full">
           <h2 className="font-heading font-bold text-4xl text-primary text-center mb-12">
-            Built for Nepal's Healthcare System
+            Built for Nepal&apos;s Healthcare System
           </h2>
           <div className="grid grid-cols-3 gap-8">
             {[

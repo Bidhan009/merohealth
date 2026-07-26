@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
+import { useToast } from "@/components/Toast";
 
 const PROVINCES = [
   "Koshi Province", "Madhesh Province", "Bagmati Province", "Gandaki Province",
@@ -24,6 +25,7 @@ const STEPS = [
 
 export default function HospitalRegistrationPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [step, setStep] = useState(1);
   const [stepError, setStepError] = useState("");
 
@@ -120,9 +122,10 @@ export default function HospitalRegistrationPage() {
         return;
       }
 
+      showToast("Registration submitted! Awaiting Ministry approval.", "success");
       router.push("/register/hospital/pending");
     } catch {
-      setError("Something went wrong. Please try again.");
+      showToast("Something went wrong. Please try again.", "error");
       setLoading(false);
     }
   }

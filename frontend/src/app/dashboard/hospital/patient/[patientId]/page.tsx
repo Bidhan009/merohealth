@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { getToken} from "@/utils/auth";
+import { useToast } from "@/components/Toast";
 
 
 interface Report {
@@ -21,12 +22,11 @@ export default function PatientFilePage() {
   const params = useParams();
   const patientId = params.patientId as string;
 
+  const { showToast } = useToast();
   const [reports, setReports] = useState<Report[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const token=getToken();
@@ -49,8 +49,6 @@ export default function PatientFilePage() {
 
   async function handleCreateReport(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
-    setSuccess("");
     setLoading(true);
 
     const formData = new FormData();
@@ -68,8 +66,8 @@ export default function PatientFilePage() {
     const data = await res.json();
     setLoading(false);
 
-    if (!res.ok) { setError(data.error || "Failed to create report"); return; }
-    setSuccess("Report created successfully!");
+    if (!res.ok) { showToast(data.error || "Failed to create report", "error"); return; }
+    showToast("Report created successfully!", "success");
     setTitle("");
     setDescription("");
     setFile(null);
@@ -154,9 +152,6 @@ export default function PatientFilePage() {
                   />
                 </label>
               </div>
-              {error && (
-                <div className="bg-soft-red text-danger text-sm font-semibold px-4 py-3 rounded-lg">{error}</div>
-              )}
               <button
                 type="submit"
                 disabled={loading}
@@ -165,12 +160,6 @@ export default function PatientFilePage() {
                 {loading ? "Uploading..." : "Submit Report"}
               </button>
             </form>
-          </div>
-        )}
-
-        {success && (
-          <div className="bg-[rgba(139,241,230,0.3)] text-accent-light text-sm font-semibold px-4 py-3 rounded-lg">
-            {success}
           </div>
         )}
 

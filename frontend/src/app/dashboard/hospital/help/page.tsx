@@ -1,9 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { getToken} from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
 
 const FAQ = [
@@ -51,11 +48,8 @@ const CATEGORIES = [
 ];
 
 export default function HospitalHelpPage() {
-  const router = useRouter();
-  const token = getToken();
   const [search, setSearch] = useState("");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [hospitalName, setHospitalName] = useState("");
 
   const filteredFaq = FAQ.filter(
     (f) =>
@@ -63,14 +57,6 @@ export default function HospitalHelpPage() {
       f.question.toLowerCase().includes(search.toLowerCase()) ||
       f.answer.toLowerCase().includes(search.toLowerCase())
   );
-
-//   const profileRes = await fetch("http://localhost:5000/api/hospital/profile", {
-//   headers: { Authorization: `Bearer ${token}` },
-// });
-// if (profileRes.ok) {
-//   const profileData = await profileRes.json();
-//   setHospitalName(profileData.name);
-// }
 
   return (
     <HospitalLayout>
@@ -119,7 +105,7 @@ export default function HospitalHelpPage() {
             </div>
             {filteredFaq.length === 0 ? (
               <div className="p-12 text-center">
-                <p className="font-body text-muted text-base">No results found for "{search}"</p>
+                <p className="font-body text-muted text-base">No results found for &quot;{search}&quot;</p>
               </div>
             ) : (
               <div className="flex flex-col divide-y divide-border">

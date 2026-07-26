@@ -68,7 +68,7 @@ export default function PendingStatusPage() {
           <div className="bg-[rgba(139,241,230,0.2)] border-l-4 border-accent rounded-lg px-6 py-4 text-left w-full">
             <p className="font-heading font-semibold text-sm text-accent-light">What happens next?</p>
             <p className="font-body text-body text-sm mt-1 leading-relaxed">
-              A Ministry of Health officer will review your details within 1–2 business days. You'll receive an email at your registered address once a decision is made.
+              A Ministry of Health officer will review your details within 1–2 business days. You&apos;ll receive an email at your registered address once a decision is made.
             </p>
           </div>
 

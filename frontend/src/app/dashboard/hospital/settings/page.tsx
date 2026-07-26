@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getToken, logout } from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
 import { getInitials } from "@/utils/avatar";
 import { Skeleton } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 interface HospitalProfile {
   name: string;
@@ -18,11 +18,10 @@ interface HospitalProfile {
 export default function HospitalSettingsPage() {
   const router = useRouter();
   const token = getToken();
+  const { showToast } = useToast();
   const [profile, setProfile] = useState<HospitalProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
 
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -55,8 +54,6 @@ export default function HospitalSettingsPage() {
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
-    setSuccess("");
     setSaving(true);
 
     try {
@@ -70,11 +67,11 @@ export default function HospitalSettingsPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "Failed to save"); return; }
-      setSuccess("Profile updated successfully!");
+      if (!res.ok) { showToast(data.error || "Failed to save", "error"); return; }
+      showToast("Profile updated successfully!", "success");
       setProfile((prev) => prev ? { ...prev, name, address } : prev);
     } catch {
-      setError("Something went wrong.");
+      showToast("Something went wrong.", "error");
     } finally {
       setSaving(false);
     }
@@ -236,17 +233,6 @@ export default function HospitalSettingsPage() {
                       Email cannot be changed. Contact support if needed.
                     </p>
                   </div>
-
-                  {error && (
-                    <div className="bg-soft-red text-danger text-sm font-semibold px-4 py-3 rounded-lg">
-                      {error}
-                    </div>
-                  )}
-                  {success && (
-                    <div className="bg-[rgba(139,241,230,0.3)] text-accent-light text-sm font-semibold px-4 py-3 rounded-lg">
-                      {success}
-                    </div>
-                  )}
 
                   <button
                     type="submit"

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { SkeletonListItem } from "@/components/Skeleton";
@@ -20,22 +19,12 @@ interface TimelineGroup {
   month: string;
   reports: Report[];
 }
-interface PatientInfo {
-  fullName: string;
-  citizenId: string;
-  isMinor: boolean;
-  dateOfBirth: string;
-  user: { email: string };
-}
 
 export default function PatientTimelinePage() {
   const router = useRouter();
   const token = getToken();
   const [groups, setGroups] = useState<TimelineGroup[]>([]);
-  const [patientName, setPatientName] = useState("");
   const [loading, setLoading] = useState(true);
-  const [patient, setPatient] = useState<PatientInfo | null>(null);
-  const [citizenId, setCitizenId] = useState("");
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
@@ -47,9 +36,6 @@ export default function PatientTimelinePage() {
         });
         if (res.ok) {
           const data = await res.json();
-          setPatientName(data.patient.fullName);
-          setPatientName(data.patient.fullName);
-          setCitizenId(data.patient.citizenId);
           const reports: Report[] = data.reports;
           const map = new Map<string, Report[]>();
           reports.forEach((r) => {
@@ -72,7 +58,7 @@ export default function PatientTimelinePage() {
   }, []);
 
   return (
-    <PatientLayout patientName={patientName} citizenId={citizenId}>
+    <PatientLayout>
         {/* Main */}
         <main className="flex-1 p-6 flex flex-col gap-6">
           <div>

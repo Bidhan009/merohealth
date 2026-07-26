@@ -41,7 +41,6 @@ export default function ReportCategoriesPage() {
   const [allReports, setAllReports] = useState<Report[]>([]);
   const [selected, setSelected] = useState<string>("All");
   const [loading, setLoading] = useState(true);
-  const [hospitalName, setHospitalName] = useState("");
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
@@ -56,13 +55,6 @@ export default function ReportCategoriesPage() {
         }
       } finally {
         setLoading(false);
-      }
-      const profileRes = await fetch("http://localhost:5000/api/hospital/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (profileRes.ok) {
-        const profileData = await profileRes.json();
-        setHospitalName(profileData.name);
       }
     };
     load();

@@ -31,7 +31,6 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
   const router = useRouter();
   const token = getToken();
   const [hospitalName, setHospitalName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
   if (!token) return;
@@ -42,7 +41,6 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
     if (res.ok) {
       const data = await res.json();
       setHospitalName(data.name);
-      setAvatarUrl(data.avatarUrl ?? "");
     }
   };
   load();

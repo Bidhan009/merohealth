@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Link from "next/link";
-import { getToken,getRole } from "@/utils/auth";
+import { getToken } from "@/utils/auth";
+import { useToast } from "@/components/Toast";
 
 export default function EditReportPage() {
   const router = useRouter();
   const params = useParams();
   const reportId = params.reportId as string;
 
+  const { showToast } = useToast();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const token = getToken();
@@ -39,7 +39,6 @@ export default function EditReportPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     const formData = new FormData();
@@ -59,7 +58,8 @@ export default function EditReportPage() {
     const data = await res.json();
     setLoading(false);
 
-    if (!res.ok) { setError(data.error || "Failed to update report"); return; }
+    if (!res.ok) { showToast(data.error || "Failed to update report", "error"); return; }
+    showToast("Report updated successfully!", "success");
     router.back();
   }
 
@@ -128,10 +128,6 @@ export default function EditReportPage() {
                 />
               </label>
             </div>
-
-            {error && (
-              <div className="bg-soft-red text-danger text-sm font-semibold px-4 py-3 rounded-lg">{error}</div>
-            )}
 
             <button
               type="submit"

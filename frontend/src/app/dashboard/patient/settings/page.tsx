@@ -7,6 +7,7 @@ import PatientLayout from "@/components/PatientLayout";
 import { getInitials } from "@/utils/avatar";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
 import { Skeleton } from "@/components/Skeleton";
+import { useToast } from "@/components/Toast";
 
 interface PatientInfo {
   fullName: string;
@@ -19,13 +20,13 @@ interface PatientInfo {
 export default function PatientSettingsPage() {
   const router = useRouter();
   const token = getToken();
+  const { showToast } = useToast();
   const [patient, setPatient] = useState<PatientInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [pwError, setPwError] = useState("");
-  const [pwSuccess, setPwSuccess] = useState("");
   const [pwLoading, setPwLoading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarLoading, setAvatarLoading] = useState(false);
@@ -54,7 +55,6 @@ export default function PatientSettingsPage() {
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault();
     setPwError("");
-    setPwSuccess("");
 
     if (newPassword !== confirmPassword) {
       setPwError("Passwords do not match");
@@ -76,13 +76,13 @@ export default function PatientSettingsPage() {
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       const data = await res.json();
-      if (!res.ok) { setPwError(data.error || "Failed to change password"); return; }
-      setPwSuccess("Password changed successfully!");
+      if (!res.ok) { showToast(data.error || "Failed to change password", "error"); return; }
+      showToast("Password changed successfully!", "success");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch {
-      setPwError("Something went wrong.");
+      showToast("Something went wrong.", "error");
     } finally {
       setPwLoading(false);
     }
@@ -286,11 +286,6 @@ export default function PatientSettingsPage() {
               {pwError && (
                 <div className="bg-soft-red text-danger text-sm font-semibold px-4 py-3 rounded-lg">
                   {pwError}
-                </div>
-              )}
-              {pwSuccess && (
-                <div className="bg-[rgba(139,241,230,0.3)] text-accent-light text-sm font-semibold px-4 py-3 rounded-lg">
-                  {pwSuccess}
                 </div>
               )}
 

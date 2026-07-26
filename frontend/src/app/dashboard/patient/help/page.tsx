@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 
@@ -57,37 +56,15 @@ const CATEGORIES = [
   { icon: "🏥", label: "Hospitals", desc: "Hospital access and linking" },
   { icon: "🆘", label: "Emergency", desc: "Emergency ID features" },
 ];
-interface PatientInfo {
-  fullName: string;
-  citizenId: string;
-  isMinor: boolean;
-  dateOfBirth: string;
-  user: { email: string };
-}
-
 export default function PatientHelpPage() {
   const router = useRouter();
   const token = getToken();
   const [search, setSearch] = useState("");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [patient, setPatient] = useState<PatientInfo | null>(null);
-  const [patientName, setPatientName] = useState("");
-  const [citizenId, setCitizenId] = useState("");
 
   useEffect(() => {
-  if (!token) { router.replace("/login"); return; }
-  const load = async () => {
-    const res = await fetch("http://localhost:5000/api/patient/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setPatientName(data.patient.fullName);
-      setCitizenId(data.patient.citizenId);
-    }
-  };
-  load();
-}, []);
+    if (!token) { router.replace("/login"); return; }
+  }, []);
 
   const filteredFaq = FAQ.filter(
     (f) =>
@@ -97,7 +74,7 @@ export default function PatientHelpPage() {
   );
 
   return (
-      <PatientLayout patientName={patientName} citizenId={citizenId}>
+      <PatientLayout>
         {/* Main */}
         <main className="flex-1 p-6 flex flex-col gap-8">
 
@@ -147,7 +124,7 @@ export default function PatientHelpPage() {
             {filteredFaq.length === 0 ? (
               <div className="p-12 text-center">
                 <p className="font-body text-muted text-base">
-                  No results found for "{search}"
+                  No results found for &quot;{search}&quot;
                 </p>
               </div>
             ) : (

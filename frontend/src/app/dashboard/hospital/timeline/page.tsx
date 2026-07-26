@@ -28,7 +28,6 @@ export default function HospitalTimelinePage() {
   const token = getToken();
   const [groups, setGroups] = useState<TimelineGroup[]>([]);
   const [loading, setLoading] = useState(true);
-  const [hospitalName, setHospitalName] = useState("");
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
@@ -56,13 +55,6 @@ export default function HospitalTimelinePage() {
         }
       } finally {
         setLoading(false);
-      }
-      const profileRes = await fetch("http://localhost:5000/api/hospital/profile", {
-  headers: { Authorization: `Bearer ${token}` },
-      });
-      if (profileRes.ok) {
-        const profileData = await profileRes.json();
-        setHospitalName(profileData.name);
       }
     };
 

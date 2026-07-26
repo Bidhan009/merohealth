@@ -53,6 +53,8 @@ export async function registerHospital(req: Request, res: Response) {
 
     const verificationToken = generateVerificationToken();
 
+    const avatarUrl = req.file ? `/uploads/avatars/${req.file.filename}` : null;
+
     const newUser = await prisma.user.create({
       data: {
         email: data.email,
@@ -65,6 +67,7 @@ export async function registerHospital(req: Request, res: Response) {
             name: data.name,
             registrationNumber: data.registrationNumber,
             address: data.address,
+            avatarUrl: avatarUrl,
           },
         },
       },
@@ -77,7 +80,8 @@ export async function registerHospital(req: Request, res: Response) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.issues });
+      const message = error.issues.map((issue) => issue.message).join(", ");
+      return res.status(400).json({ error: message });
     }
     if (isPrismaUniqueError(error)) {
       return res.status(409).json({ error: "An account with these details already exists" });
@@ -151,7 +155,8 @@ export async function registerPatient(req: Request, res: Response) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.issues });
+      const message = error.issues.map((issue) => issue.message).join(", ");
+      return res.status(400).json({ error: message });
     }
     if (isPrismaUniqueError(error)) {
       return res.status(409).json({ error: "An account with these details already exists" });

@@ -6,15 +6,16 @@ import { comparePassword, hashPassword } from "../utils/password";
 export async function getMyRecords(req: AuthRequest, res: Response) {
   try {
     const patient = await prisma.patient.findUnique({
-      where: { userId: req.user!.userId },
-      select: {
-        id: true,
-        fullName: true,
-        citizenId: true,
-        isMinor: true,
-        dateOfBirth: true,
-      },
-    });
+        where: { userId: req.user!.userId },
+        select: {
+          id: true,
+          fullName: true,
+          citizenId: true,
+          isMinor: true,
+          dateOfBirth: true,
+          avatarUrl: true,
+        },
+      });
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });

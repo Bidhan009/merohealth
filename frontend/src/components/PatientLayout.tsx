@@ -85,9 +85,17 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm shrink-0`}>
-            {initials}
-          </div>
+          {avatarUrl ? (
+              <img
+                src={`http://localhost:5000${avatarUrl}`}
+                alt={patientName || "Patient"}
+                className="w-9 h-9 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm shrink-0`}>
+                {initials}
+              </div>
+            )}
           <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
             Emergency ID
           </button>
@@ -105,9 +113,17 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
         {/* Sidebar */}
         <aside className="w-64 bg-[#f2f4f6] border-r border-border-strong flex flex-col gap-2 p-4 min-h-full">
           <div className="flex items-center gap-3 px-2 pb-6">
-            <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-base shrink-0`}>
-              {initials}
-            </div>
+            {avatarUrl ? (
+                <img
+                  src={`http://localhost:5000${avatarUrl}`}
+                  alt={patientName || "Patient"}
+                  className="w-10 h-10 rounded-full object-cover shrink-0"
+                />
+              ) : (
+                <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-base shrink-0`}>
+                  {initials}
+                </div>
+              )}
             <div className="overflow-hidden">
               <p className="font-heading font-bold text-sm text-primary truncate">
                 {patientName || "Patient"}
@@ -149,7 +165,7 @@ export default function PatientLayout({ children }: PatientLayoutProps) {
       <footer className="bg-[#e0e3e5] border-t border-border-strong px-12 py-8 flex items-center justify-between">
         <div>
           <p className="font-heading font-bold text-sm text-primary">MeroHealth</p>
-          <p className="font-body text-body text-base">© 2024 MeroHealth. Verified by Ministry of Health Nepal.</p>
+          <p className="font-body text-body text-base">© 2026 MeroHealth. Verified by Ministry of Health Nepal.</p>
         </div>
         <div className="flex gap-6">
           <Link href="#" className="font-heading font-semibold text-sm text-body hover:text-primary">Privacy Policy</Link>

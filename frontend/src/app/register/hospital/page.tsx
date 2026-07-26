@@ -41,49 +41,51 @@ export default function HospitalRegistrationPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const fullAddress = [streetAddress, municipality, district, province]
     .filter(Boolean)
     .join(", ");
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+  if (password !== confirmPassword) {
+    setError("Passwords do not match");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("name", name);
+    formData.append("registrationNumber", registrationNumber);
+    formData.append("address", fullAddress || streetAddress);
+    if (avatarFile) formData.append("avatar", avatarFile);
+
+    const res = await fetch("http://localhost:5000/api/auth/register/hospital", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || "Registration failed");
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/register/hospital", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          name,
-          registrationNumber,
-          address: fullAddress || streetAddress,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Registration failed");
-        setLoading(false);
-        return;
-      }
-
-      router.push("/register/hospital/pending");
-    } catch {
-      setError("Something went wrong. Please try again.");
-      setLoading(false);
-    }
+    router.push("/register/hospital/pending");
+  } catch {
+    setError("Something went wrong. Please try again.");
+    setLoading(false);
   }
+}
 
   const inputClass = "border border-border-strong rounded-lg px-4 py-3 font-body text-base text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent w-full";
   const labelClass = "font-heading font-semibold text-sm text-body";
@@ -177,6 +179,34 @@ export default function HospitalRegistrationPage() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
                     <label className={labelClass}>Official Hospital Name</label>
+                    <div className="flex flex-col gap-2 col-span-2">
+                      <label className={labelClass}>Hospital Logo / Photo</label>
+                      <label className="border-2 border-dashed border-border-strong rounded-xl p-6 flex items-center gap-4 cursor-pointer hover:border-accent transition-colors bg-bg">
+                        {avatarFile ? (
+                          <img
+                            src={URL.createObjectURL(avatarFile)}
+                            alt="Preview"
+                            className="w-20 h-24 rounded-lg object-cover border border-border"
+                          />
+                        ) : (
+                          <div className="w-20 h-24 rounded-lg bg-[#e6e8ea] flex items-center justify-center text-2xl border border-border">
+                            🏥
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-body text-body text-base">
+                            {avatarFile ? avatarFile.name : "Click to upload hospital logo/photo"}
+                          </p>
+                          <p className="font-body text-muted text-sm mt-1">JPG, PNG, WEBP (Max 5MB)</p>
+                        </div>
+                        <input
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.webp"
+                          className="hidden"
+                          onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                        />
+                      </label>
+                    </div>
                     <input
                       type="text"
                       value={name}
@@ -401,7 +431,7 @@ export default function HospitalRegistrationPage() {
       <footer className="bg-[#e0e3e5] border-t border-border-strong px-12 py-8 flex items-center justify-between mt-12">
         <div>
           <p className="font-heading font-bold text-sm text-primary">MeroHealth</p>
-          <p className="font-body text-body text-base">© 2024 MeroHealth. Verified by Ministry of Health Nepal.</p>
+          <p className="font-body text-body text-base">© 2026 MeroHealth. Verified by Ministry of Health Nepal.</p>
         </div>
         <div className="flex gap-6">
           <Link href="#" className="font-heading font-semibold text-sm text-body hover:text-primary">Privacy Policy</Link>

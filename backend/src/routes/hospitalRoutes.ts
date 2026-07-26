@@ -16,6 +16,7 @@ import {
   getAllReports,
 } from "../controllers/reportController";
 import { upload, uploadAvatar } from "../utils/upload";
+import { registerHospital } from "../controllers/authController";
 const router = Router();
 
 router.use(requireAuth);
@@ -33,5 +34,6 @@ router.put("/reports/:reportId", upload.single("file"), editReport);
 router.get("/profile", getHospitalProfile);
 router.put("/profile", updateHospitalProfile);
 router.post("/avatar", uploadAvatar.single("avatar"), uploadHospitalAvatar);
+router.post("/register/hospital", uploadAvatar.single("avatar"), registerHospital);
 
 export default router;

@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
 export default function PatientRegistrationPage() {
   const [fullName, setFullName] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [citizenId, setCitizenId] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState("");

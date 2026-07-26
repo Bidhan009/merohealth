@@ -20,6 +20,7 @@ export async function searchPatient(req: AuthRequest, res: Response) {
         citizenId: true,
         isMinor: true,
         dateOfBirth: true,
+        avatarUrl: true,
         user: { select: { email: true, status: true } },
       },
     });
@@ -95,15 +96,16 @@ export async function getLinkedPatients(req: AuthRequest, res: Response) {
       where: { hospitalId: hospital.id },
       include: {
         patient: {
-          select: {
-            id: true,
-            fullName: true,
-            citizenId: true,
-            isMinor: true,
-            dateOfBirth: true,
-            user: { select: { email: true } },
-          },
+        select: {
+          id: true,
+          fullName: true,
+          citizenId: true,
+          isMinor: true,
+          dateOfBirth: true,
+          avatarUrl: true,
+          user: { select: { email: true } },
         },
+      },
       },
     });
 

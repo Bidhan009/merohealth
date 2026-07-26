@@ -5,7 +5,9 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import { useToast } from "@/components/Toast";
-
+import PatientIdentityHeader from "@/components/PatientIdentityHeader";
+import ReportCard from "@/components/ReportCard";
+import { Skeleton, SkeletonListItem } from "@/components/Skeleton";
 
 interface Report {
   id: string;
@@ -17,6 +19,15 @@ interface Report {
   hospital: { name: string; id: string };
 }
 
+interface PatientInfo {
+  id: string;
+  fullName: string;
+  citizenId: string;
+  isMinor: boolean;
+  dateOfBirth: string;
+  avatarUrl: string | null;
+}
+
 export default function PatientFilePage() {
   const router = useRouter();
   const params = useParams();
@@ -24,16 +35,39 @@ export default function PatientFilePage() {
 
   const { showToast } = useToast();
   const [reports, setReports] = useState<Report[]>([]);
+  const [patient, setPatient] = useState<PatientInfo | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const token=getToken();
 
   useEffect(() => {
     if (!token) { router.replace("/login"); return; }
-    fetchReports();
+
+    const load = async () => {
+      try {
+        const [reportsRes, patientsRes] = await Promise.all([
+          fetch(`http://localhost:5000/api/hospital/reports/${patientId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:5000/api/hospital/patients", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+        if (reportsRes.ok) setReports(await reportsRes.json());
+        if (patientsRes.ok) {
+          const patients: PatientInfo[] = await patientsRes.json();
+          setPatient(patients.find((p) => p.id === patientId) ?? null);
+        }
+      } finally {
+        setPageLoading(false);
+      }
+    };
+
+    load();
   }, []);
 
   async function fetchReports() {
@@ -94,7 +128,27 @@ export default function PatientFilePage() {
         </div>
       </header>
 
-      <main className="flex-1 p-8 flex flex-col gap-8 max-w-5xl mx-auto w-full">
+      <main className="flex-1 p-8 flex flex-col gap-6 max-w-5xl mx-auto w-full">
+
+        {/* Patient Identity */}
+        {pageLoading ? (
+          <div className="bg-white border border-border rounded-xl p-6 flex items-center gap-5">
+            <Skeleton className="w-20 h-20 rounded-full shrink-0" />
+            <div className="flex flex-col gap-2 flex-1">
+              <Skeleton className="w-48 h-7" />
+              <Skeleton className="w-64 h-4" />
+            </div>
+          </div>
+        ) : patient ? (
+          <PatientIdentityHeader
+            fullName={patient.fullName}
+            citizenId={patient.citizenId}
+            dateOfBirth={patient.dateOfBirth}
+            isMinor={patient.isMinor}
+            avatarUrl={patient.avatarUrl}
+            reportCount={reports.length}
+          />
+        ) : null}
 
         {/* Page Header */}
         <div className="flex items-center justify-between">
@@ -170,51 +224,34 @@ export default function PatientFilePage() {
               Medical Reports ({reports.length})
             </h2>
           </div>
-          {reports.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="font-body text-muted text-base">No reports yet. Create the first report for this patient.</p>
+          {pageLoading ? (
+            <div className="flex flex-col">
+              <SkeletonListItem />
+              <SkeletonListItem />
+              <SkeletonListItem />
+            </div>
+          ) : reports.length === 0 ? (
+            <div className="p-12 flex flex-col items-center gap-3 text-center">
+              <div className="w-16 h-16 rounded-full bg-[#e6e8ea] flex items-center justify-center text-3xl">
+                📋
+              </div>
+              <p className="font-heading font-semibold text-xl text-primary">No reports yet</p>
+              <p className="font-body text-body text-base max-w-sm">
+                Create the first medical report for this patient to start their record.
+              </p>
+              {!showForm && (
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="mt-2 bg-primary text-white font-heading font-semibold text-sm px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+                >
+                  Upload First Report
+                </button>
+              )}
             </div>
           ) : (
-            <div className="flex flex-col divide-y divide-border">
+            <div className="p-6 flex flex-col gap-3">
               {reports.map((report) => (
-                <div key={report.id} className="px-6 py-5 flex items-start justify-between">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-3">
-                      <p className="font-heading font-semibold text-base text-primary">{report.title}</p>
-                      {report.isOwn ? (
-                        <span className="text-xs font-semibold bg-[rgba(139,241,230,0.3)] text-accent-light px-2 py-0.5 rounded-full">Your Report</span>
-                      ) : (
-                        <span className="text-xs font-semibold bg-soft-blue text-primary px-2 py-0.5 rounded-full">Read Only</span>
-                      )}
-                    </div>
-                    {report.description && (
-                      <p className="font-body text-body text-sm">{report.description}</p>
-                    )}
-                    <p className="font-body text-muted text-xs">
-                      By {report.hospital.name} · {new Date(report.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {report.fileUrl && (
-                      <a
-                        href={`http://localhost:5000${report.fileUrl}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-heading font-semibold text-sm text-accent hover:underline"
-                      >
-                        View File
-                      </a>
-                    )}
-                    {report.isOwn && (
-                      <Link
-                        href={`/dashboard/hospital/report/${report.id}/edit`}
-                        className="border border-border-strong text-body text-sm font-semibold px-3 py-1.5 rounded-lg hover:border-accent hover:text-accent transition-colors"
-                      >
-                        Edit
-                      </Link>
-                    )}
-                  </div>
-                </div>
+                <ReportCard key={report.id} report={report} showOwnership />
               ))}
             </div>
           )}

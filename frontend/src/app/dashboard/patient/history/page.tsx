@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { getToken} from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { SkeletonListItem } from "@/components/Skeleton";
+import ReportCard from "@/components/ReportCard";
+import { categorizeReport, REPORT_CATEGORIES } from "@/utils/reports";
 
 interface Report {
   id: string;
@@ -20,23 +22,6 @@ interface PatientInfo {
   citizenId: string;
   isMinor: boolean;
   dateOfBirth: string;
-}
-
-const CATEGORIES = [
-  { label: "Blood Tests", icon: "🩸", keywords: ["blood", "cbc", "hemoglobin", "platelet"] },
-  { label: "Imaging", icon: "🫁", keywords: ["xray", "x-ray", "mri", "ct", "scan", "ultrasound"] },
-  { label: "Vaccination", icon: "💉", keywords: ["vaccine", "vaccination", "immunization", "booster"] },
-  { label: "Surgery", icon: "🏥", keywords: ["surgery", "operation", "procedure", "surgical"] },
-  { label: "Cardiology", icon: "❤️", keywords: ["heart", "cardiac", "ecg", "echo", "cardio"] },
-  { label: "General", icon: "📋", keywords: [] },
-];
-
-function categorize(report: Report): string {
-  const text = (report.title + " " + (report.description ?? "")).toLowerCase();
-  for (const cat of CATEGORIES.slice(0, -1)) {
-    if (cat.keywords.some((k) => text.includes(k))) return cat.label;
-  }
-  return "General";
 }
 
 export default function PatientHistoryPage() {
@@ -68,14 +53,14 @@ export default function PatientHistoryPage() {
     load();
   }, []);
 
-  const categorized = CATEGORIES.map((cat) => ({
+  const categorized = REPORT_CATEGORIES.map((cat) => ({
     ...cat,
-    reports: reports.filter((r) => categorize(r) === cat.label),
+    reports: reports.filter((r) => categorizeReport(r.title, r.description) === cat.label),
   }));
 
   const displayed = selected === "All"
     ? reports
-    : reports.filter((r) => categorize(r) === selected);
+    : reports.filter((r) => categorizeReport(r.title, r.description) === selected);
 
   const hospitals = [...new Set(reports.map((r) => r.hospital.name))];
 
@@ -177,51 +162,21 @@ export default function PatientHistoryPage() {
                 <SkeletonListItem />
               </div>
             ) : displayed.length === 0 ? (
-              <div className="p-12 flex flex-col items-center gap-4 text-center">
-                <span className="text-5xl">📭</span>
+              <div className="p-12 flex flex-col items-center gap-3 text-center">
+                <div className="w-16 h-16 rounded-full bg-[#e6e8ea] flex items-center justify-center text-3xl">
+                  📭
+                </div>
                 <p className="font-heading font-semibold text-xl text-primary">
                   No records in this category
                 </p>
+                <p className="font-body text-body text-base max-w-sm">
+                  Try selecting a different category, or check back after your next hospital visit.
+                </p>
               </div>
             ) : (
-              <div className="flex flex-col divide-y divide-border">
+              <div className="p-6 flex flex-col gap-3">
                 {displayed.map((report) => (
-                  <div key={report.id} className="px-6 py-5 flex items-start justify-between">
-                    <div className="flex gap-4 items-start">
-                      <div className="w-10 h-10 rounded-lg bg-soft-blue flex items-center justify-center text-lg shrink-0">
-                        📄
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <p className="font-heading font-semibold text-base text-primary">
-                          {report.title}
-                        </p>
-                        {report.description && (
-                          <p className="font-body text-body text-sm">{report.description}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="bg-[rgba(139,241,230,0.3)] text-accent-light text-xs font-semibold px-2 py-0.5 rounded-full">
-                            {report.hospital.name}
-                          </span>
-                          <span className="text-muted text-xs">·</span>
-                          <span className="text-muted text-xs">
-                            {new Date(report.createdAt).toLocaleDateString("en-GB", {
-                              day: "numeric", month: "short", year: "numeric",
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    {report.fileUrl && (
-                      <a
-                        href={`http://localhost:5000${report.fileUrl}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-heading font-semibold text-sm text-accent hover:underline shrink-0"
-                      >
-                        View File →
-                      </a>
-                    )}
-                  </div>
+                  <ReportCard key={report.id} report={report} />
                 ))}
               </div>
             )}

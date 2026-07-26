@@ -87,7 +87,18 @@ export async function getPatientReports(req: AuthRequest, res: Response) {
 
     const reports = await prisma.report.findMany({
       where: { patientId },
-      include: { hospital: { select: { name: true, id: true } } },
+      include: {
+        hospital: { select: { name: true, id: true } },
+        patient: {
+          select: {
+            fullName: true,
+            citizenId: true,
+            avatarUrl: true,
+            dateOfBirth: true,
+            isMinor: true,
+          },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -201,7 +212,7 @@ export async function getAllReports(req: AuthRequest, res: Response) {
       where: { patientId: { in: patientIds } },
       include: {
         hospital: { select: { name: true, id: true } },
-        patient: { select: { fullName: true, citizenId: true } },
+        patient: { select: { fullName: true, citizenId: true, avatarUrl: true } },
       },
       orderBy: { createdAt: "desc" },
     });

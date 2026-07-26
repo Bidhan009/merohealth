@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getToken} from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { SkeletonListItem } from "@/components/Skeleton";
+import ReportCard from "@/components/ReportCard";
 
 interface Report {
   id: string;
@@ -76,8 +77,10 @@ export default function PatientTimelinePage() {
               <SkeletonListItem />
             </div>
           ) : groups.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
-              <span className="text-5xl">📅</span>
+            <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
+              <div className="w-16 h-16 rounded-full bg-[#e6e8ea] flex items-center justify-center text-3xl">
+                📅
+              </div>
               <p className="font-heading font-semibold text-xl text-primary">No records yet</p>
               <p className="font-body text-body text-base max-w-sm">
                 Your medical records will appear here once a hospital adds them to your profile.
@@ -99,45 +102,9 @@ export default function PatientTimelinePage() {
 
                   <div className="flex flex-col gap-3 pl-4 border-l-2 border-border-strong ml-4">
                     {group.reports.map((report) => (
-                      <div
-                        key={report.id}
-                        className="bg-white border border-border rounded-xl p-5 shadow-sm flex items-start justify-between relative"
-                      >
-                        <div className="absolute -left-[21px] top-6 w-3 h-3 rounded-full bg-accent border-2 border-white shadow" />
-                        <div className="flex gap-4 items-start">
-                          <div className="w-10 h-10 rounded-lg bg-soft-blue flex items-center justify-center text-lg shrink-0">
-                            📄
-                          </div>
-                          <div className="flex flex-col gap-1">
-                            <p className="font-heading font-semibold text-base text-primary">
-                              {report.title}
-                            </p>
-                            {report.description && (
-                              <p className="font-body text-body text-sm">{report.description}</p>
-                            )}
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="bg-[rgba(139,241,230,0.3)] text-accent-light text-xs font-semibold px-2 py-0.5 rounded-full">
-                                {report.hospital.name}
-                              </span>
-                              <span className="text-muted text-xs">·</span>
-                              <span className="text-muted text-xs">
-                                {new Date(report.createdAt).toLocaleDateString("en-GB", {
-                                  day: "numeric", month: "short",
-                                })}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        {report.fileUrl && (
-                          <a  
-                            href={`http://localhost:5000${report.fileUrl}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-heading font-semibold text-sm text-accent hover:underline shrink-0"
-                          >
-                            View File →
-                          </a>
-                        )}
+                      <div key={report.id} className="relative">
+                        <div className="absolute -left-[25px] top-6 w-3 h-3 rounded-full bg-accent border-2 border-white shadow" />
+                        <ReportCard report={report} />
                       </div>
                     ))}
                   </div>

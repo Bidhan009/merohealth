@@ -6,6 +6,7 @@ import { getToken } from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { SkeletonCard, SkeletonListItem } from "@/components/Skeleton";
 import { useLanguage } from "@/i18n/LanguageContext";
+import ReportCard from "@/components/ReportCard";
 
 interface Report {
   id: string;
@@ -145,50 +146,19 @@ export default function PatientDashboard() {
         )}
 
         {reports.length === 0 ? (
-          <div className="p-12 flex flex-col items-center gap-4 text-center">
-            <span className="text-5xl">📋</span>
+          <div className="p-12 flex flex-col items-center gap-3 text-center">
+            <div className="w-16 h-16 rounded-full bg-[#e6e8ea] flex items-center justify-center text-3xl">
+              📋
+            </div>
             <p className="font-heading font-semibold text-xl text-primary">{t.dashboard.noReportsYet}</p>
             <p className="font-body text-body text-base max-w-sm">
               Your medical reports will appear here once a hospital adds them to your profile.
             </p>
           </div>
         ) : (
-          <div className="flex flex-col divide-y divide-border">
+          <div className="p-6 flex flex-col gap-3">
             {reports.map((report) => (
-              <div key={report.id} className="px-6 py-5 flex items-start justify-between">
-                <div className="flex gap-4 items-start">
-                  <div className="w-10 h-10 rounded-lg bg-soft-blue flex items-center justify-center text-primary font-bold shrink-0">
-                    📄
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <p className="font-heading font-semibold text-base text-primary">{report.title}</p>
-                    {report.description && (
-                      <p className="font-body text-body text-sm">{report.description}</p>
-                    )}
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="bg-[rgba(139,241,230,0.3)] text-accent-light text-xs font-semibold px-2 py-0.5 rounded-full">
-                        {report.hospital.name}
-                      </span>
-                      <span className="text-muted text-xs">·</span>
-                      <span className="text-muted text-xs">
-                        {new Date(report.createdAt).toLocaleDateString("en-GB", {
-                          day: "numeric", month: "long", year: "numeric",
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {report.fileUrl && (
-                  <a
-                    href={`http://localhost:5000${report.fileUrl}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-heading font-semibold text-sm text-accent hover:underline shrink-0 mt-1"
-                  >
-                    {t.common.viewFile} →
-                  </a>
-                )}
-              </div>
+              <ReportCard key={report.id} report={report} />
             ))}
           </div>
         )}

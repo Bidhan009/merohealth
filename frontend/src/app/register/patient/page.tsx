@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
 
 export default function PatientRegistrationPage() {
   const [fullName, setFullName] = useState("");
@@ -294,6 +295,16 @@ export default function PatientRegistrationPage() {
                   className="border border-border-strong rounded-lg px-4 py-3 font-body text-base text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
+              <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Min. 8 characters"
+                    required
+                    minLength={8}
+                    className="border border-border-strong rounded-lg px-4 py-3 font-body text-base text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                  />
+                  <PasswordStrengthMeter password={password} />
 
               {/* Confirm Password */}
               <div className="flex flex-col gap-2">

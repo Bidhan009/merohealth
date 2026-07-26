@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getToken } from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { getInitials } from "@/utils/avatar";
+import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
 
 interface PatientInfo {
   fullName: string;
@@ -237,18 +238,20 @@ export default function PatientSettingsPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-heading font-semibold text-sm text-primary">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  placeholder="Min. 8 characters"
-                  className="border border-border-strong rounded-lg px-4 py-3 font-body text-base text-body focus:outline-none focus:ring-2 focus:ring-accent"
-                />
-              </div>
+              <label className="font-heading font-semibold text-sm text-primary">
+                New Password
+              </label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                minLength={8}
+                placeholder="Min. 8 characters"
+                className="border border-border-strong rounded-lg px-4 py-3 font-body text-base text-body focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+              <PasswordStrengthMeter password={newPassword} />
+            </div>
               <div className="flex flex-col gap-2">
                 <label className="font-heading font-semibold text-sm text-primary">
                   Confirm New Password

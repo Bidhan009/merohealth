@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
 
 const PROVINCES = [
   "Koshi Province",
@@ -373,6 +374,16 @@ export default function HospitalRegistrationPage() {
                       minLength={8}
                       className={inputClass}
                     />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Min. 8 characters"
+                      required
+                      minLength={8}
+                      className="border border-border-strong rounded-lg px-4 py-3 font-body text-base text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                    />
+                    <PasswordStrengthMeter password={password} />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className={labelClass}>Confirm Password</label>

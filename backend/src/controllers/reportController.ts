@@ -172,6 +172,10 @@ export async function getSingleReport(req: AuthRequest, res: Response) {
 
     const report = await prisma.report.findUnique({
       where: { id: reportId },
+      include: {
+        patient: { select: { fullName: true, citizenId: true, avatarUrl: true } },
+        hospital: { select: { name: true } },
+      },
     });
 
     if (!report) {

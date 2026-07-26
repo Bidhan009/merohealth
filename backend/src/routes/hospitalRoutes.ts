@@ -4,6 +4,7 @@ import {
   searchPatient,
   linkPatient,
   getLinkedPatients,
+  getPatientEmergencyInfo,
   getHospitalProfile,
   updateHospitalProfile,
   uploadHospitalAvatar,
@@ -25,6 +26,7 @@ router.use(requireRole("HOSPITAL"));
 router.get("/patients/search", searchPatient);
 router.get("/patients", getLinkedPatients);
 router.post("/patients/link", linkPatient);
+router.get("/patients/:patientId/emergency", getPatientEmergencyInfo);
 
 router.post("/reports", upload.single("file"), createReport);
 router.get("/reports/all", getAllReports);

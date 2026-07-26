@@ -7,6 +7,7 @@ import { getToken} from "@/utils/auth";
 import { useToast } from "@/components/Toast";
 import PatientIdentityHeader from "@/components/PatientIdentityHeader";
 import ReportCard from "@/components/ReportCard";
+import EmergencyInfoPanel, { EmergencyInfo } from "@/components/EmergencyInfoPanel";
 import { Skeleton, SkeletonListItem } from "@/components/Skeleton";
 
 interface Report {
@@ -36,6 +37,8 @@ export default function PatientFilePage() {
   const { showToast } = useToast();
   const [reports, setReports] = useState<Report[]>([]);
   const [patient, setPatient] = useState<PatientInfo | null>(null);
+  const [emergencyInfo, setEmergencyInfo] = useState<EmergencyInfo | null>(null);
+  const [emergencyOpen, setEmergencyOpen] = useState(true);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -49,11 +52,14 @@ export default function PatientFilePage() {
 
     const load = async () => {
       try {
-        const [reportsRes, patientsRes] = await Promise.all([
+        const [reportsRes, patientsRes, emergencyRes] = await Promise.all([
           fetch(`http://localhost:5000/api/hospital/reports/${patientId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch("http://localhost:5000/api/hospital/patients", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://localhost:5000/api/hospital/patients/${patientId}/emergency`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -62,6 +68,7 @@ export default function PatientFilePage() {
           const patients: PatientInfo[] = await patientsRes.json();
           setPatient(patients.find((p) => p.id === patientId) ?? null);
         }
+        if (emergencyRes.ok) setEmergencyInfo(await emergencyRes.json());
       } finally {
         setPageLoading(false);
       }
@@ -122,7 +129,15 @@ export default function PatientFilePage() {
           >
             ← Back to Dashboard
           </Link>
-          <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
+          <button
+            onClick={() => {
+              setEmergencyOpen(true);
+              requestAnimationFrame(() => {
+                document.getElementById("emergency-info-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              });
+            }}
+            className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg"
+          >
             Emergency ID
           </button>
         </div>
@@ -149,6 +164,14 @@ export default function PatientFilePage() {
             reportCount={reports.length}
           />
         ) : null}
+
+        {/* Emergency Info (read-only) */}
+        <EmergencyInfoPanel
+          info={emergencyInfo}
+          loading={pageLoading}
+          open={emergencyOpen}
+          onToggleOpen={() => setEmergencyOpen((o) => !o)}
+        />
 
         {/* Page Header */}
         <div className="flex items-center justify-between">

@@ -21,6 +21,14 @@ export async function searchPatient(req: AuthRequest, res: Response) {
         isMinor: true,
         dateOfBirth: true,
         avatarUrl: true,
+        bloodType: true,
+        allergies: true,
+        chronicConditions: true,
+        medications: true,
+        emergencyName: true,
+        emergencyPhone: true,
+        emergencyRelation: true,
+        organDonor: true,
         user: { select: { email: true, status: true } },
       },
     });
@@ -33,7 +41,37 @@ export async function searchPatient(req: AuthRequest, res: Response) {
       return res.status(403).json({ error: "Patient account is not yet active" });
     }
 
-    return res.json(patient);
+    const hospital = await prisma.hospital.findUnique({
+      where: { userId: req.user!.userId },
+    });
+
+    if (!hospital) {
+      return res.status(404).json({ error: "Hospital not found" });
+    }
+
+    const [link, reportCount, lastReport] = await Promise.all([
+      prisma.hospitalPatientLink.findUnique({
+        where: {
+          patientId_hospitalId: {
+            patientId: patient.id,
+            hospitalId: hospital.id,
+          },
+        },
+      }),
+      prisma.report.count({ where: { patientId: patient.id } }),
+      prisma.report.findFirst({
+        where: { patientId: patient.id },
+        orderBy: { createdAt: "desc" },
+        select: { createdAt: true },
+      }),
+    ]);
+
+    return res.json({
+      ...patient,
+      isLinked: !!link,
+      reportCount,
+      lastReportDate: lastReport?.createdAt ?? null,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
@@ -94,6 +132,7 @@ export async function getLinkedPatients(req: AuthRequest, res: Response) {
 
     const links = await prisma.hospitalPatientLink.findMany({
       where: { hospitalId: hospital.id },
+      orderBy: { linkedAt: "desc" },
       include: {
         patient: {
         select: {
@@ -103,13 +142,91 @@ export async function getLinkedPatients(req: AuthRequest, res: Response) {
           isMinor: true,
           dateOfBirth: true,
           avatarUrl: true,
+          bloodType: true,
           user: { select: { email: true } },
         },
       },
       },
     });
 
-    return res.json(links.map((l) => l.patient));
+    const patientIds = links.map((l) => l.patientId);
+
+    // Batch report stats for all linked patients in a single query
+    const reportStats = await prisma.report.groupBy({
+      by: ["patientId"],
+      where: { patientId: { in: patientIds } },
+      _count: { _all: true },
+      _max: { createdAt: true },
+    });
+
+    const statsByPatientId = new Map(
+      reportStats.map((s) => [s.patientId, { reportCount: s._count._all, lastReportDate: s._max.createdAt }])
+    );
+
+    const patients = links.map((l) => ({
+      ...l.patient,
+      reportCount: statsByPatientId.get(l.patientId)?.reportCount ?? 0,
+      lastReportDate: statsByPatientId.get(l.patientId)?.lastReportDate ?? null,
+    }));
+
+    return res.json(patients);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}
+
+// Read-only emergency info for a linked patient
+export async function getPatientEmergencyInfo(req: AuthRequest, res: Response) {
+  try {
+    const patientId = req.params.patientId as string;
+
+    const hospital = await prisma.hospital.findUnique({
+      where: { userId: req.user!.userId },
+    });
+
+    if (!hospital) {
+      return res.status(404).json({ error: "Hospital not found" });
+    }
+
+    const link = await prisma.hospitalPatientLink.findUnique({
+      where: {
+        patientId_hospitalId: {
+          patientId,
+          hospitalId: hospital.id,
+        },
+      },
+    });
+
+    if (!link) {
+      return res.status(403).json({ error: "Not authorized to view this patient" });
+    }
+
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      select: {
+        fullName: true,
+        citizenId: true,
+        dateOfBirth: true,
+        isMinor: true,
+        avatarUrl: true,
+        bloodType: true,
+        allergies: true,
+        chronicConditions: true,
+        medications: true,
+        emergencyName: true,
+        emergencyPhone: true,
+        emergencyRelation: true,
+        organDonor: true,
+        emergencyUpdatedAt: true,
+      },
+    });
+
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    return res.json(patient);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });

@@ -37,6 +37,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
   const { showToast } = useToast();
   const { t } = useLanguage();
   const [hospitalName, setHospitalName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
   if (!token) return;
@@ -47,6 +48,7 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
     if (res.ok) {
       const data = await res.json();
       setHospitalName(data.name);
+      setAvatarUrl(data.avatarUrl ?? "");
     }
   };
   load();
@@ -91,9 +93,17 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm shrink-0`}>
-            {initials}
-          </div>
+          {avatarUrl ? (
+            <img
+              src={`http://localhost:5000${avatarUrl}`}
+              alt={hospitalName || "Hospital"}
+              className="w-9 h-9 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-sm shrink-0`}>
+              {initials}
+            </div>
+          )}
           <LanguageSwitcher />
           <button
             onClick={handleLogout}
@@ -109,9 +119,17 @@ export default function HospitalLayout({ children }: HospitalLayoutProps) {
         {/* Sidebar */}
         <aside className="w-64 bg-[#f2f4f6] border-r border-border-strong flex flex-col gap-2 p-4 min-h-full">
           <div className="flex items-center gap-3 px-2 pb-6">
-            <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-base shrink-0`}>
-              {initials}
-            </div>
+            {avatarUrl ? (
+              <img
+                src={`http://localhost:5000${avatarUrl}`}
+                alt={hospitalName || "Hospital"}
+                className="w-10 h-10 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center ${text} font-heading font-bold text-base shrink-0`}>
+                {initials}
+              </div>
+            )}
             <div className="overflow-hidden">
               <p className="font-heading font-bold text-sm text-primary truncate">
                 {hospitalName || "Hospital Portal"}

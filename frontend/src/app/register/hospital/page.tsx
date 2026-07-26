@@ -145,9 +145,6 @@ export default function HospitalRegistrationPage() {
         >
           MeroHealth
         </Link>
-        <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
-          Emergency ID
-        </button>
       </header>
 
       <main className="flex-1 flex flex-col items-center px-12 py-12">

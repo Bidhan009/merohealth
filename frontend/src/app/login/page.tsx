@@ -71,9 +71,6 @@ export default function LoginPage() {
         </Link>
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
-          <button className="bg-danger text-white text-sm font-semibold px-4 py-2 rounded-lg">
-            {t.nav.emergencyId}
-          </button>
         </div>
       </header>
 

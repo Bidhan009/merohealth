@@ -85,9 +85,6 @@ export default function PatientRegistrationPage() {
         >
           MeroHealth
         </Link>
-        <button className="bg-danger text-white text-sm font-extrabold tracking-widest px-4 py-2 rounded-lg">
-          Emergency ID
-        </button>
       </header>
 
       {/* Main */}

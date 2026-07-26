@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { registerHospital, registerPatient, approveUser, rejectUser, login } from "../controllers/authController";
+import { uploadAvatar } from "../utils/upload";
 
 
 const router = Router();
@@ -9,5 +10,6 @@ router.post("/register/patient", registerPatient);
 router.get("/approve/:token", approveUser);
 router.get("/reject/:token", rejectUser);
 router.post("/login", login);
+router.post("/register/patient", uploadAvatar.single("avatar"), registerPatient);
 
 export default router;

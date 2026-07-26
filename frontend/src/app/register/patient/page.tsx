@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
 export default function PatientRegistrationPage() {
   const [fullName, setFullName] = useState("");
@@ -35,43 +36,38 @@ export default function PatientRegistrationPage() {
   const isMinor = age >= 0 && age < 16;
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-      if (password !== confirmPassword) {
-        setError("Passwords do not match");
-        setLoading(false);
-        return;
-      }
+  try {
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("fullName", fullName);
+    formData.append("dateOfBirth", dateOfBirth);
+    if (!isMinor) formData.append("citizenId", citizenId);
+    if (avatarFile) formData.append("avatar", avatarFile);
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/register/patient", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          fullName,
-          dateOfBirth,
-          citizenId: isMinor ? undefined : citizenId,
-        }),
-      });
+    const res = await fetch("http://localhost:5000/api/auth/register/patient", {
+      method: "POST",
+      body: formData,
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error || "Registration failed");
-        setLoading(false);
-        return;
-      }
-
-      router.push("/register/patient/pending");
-    } catch {
-      setError("Something went wrong. Please try again.");
+    if (!res.ok) {
+      setError(data.error || "Registration failed");
       setLoading(false);
+      return;
     }
+
+    router.push("/register/patient/pending");
+  } catch {
+    setError("Something went wrong. Please try again.");
+    setLoading(false);
   }
+}
 
   return (
     <div className="min-h-screen bg-bg flex flex-col font-body">
@@ -159,6 +155,37 @@ export default function PatientRegistrationPage() {
                   required
                   className="border border-border-strong rounded-lg px-4 py-3 font-body text-base text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent"
                 />
+              </div>
+              {/* Photo Upload */}
+              <div className="flex flex-col gap-2">
+                <label className="font-heading font-semibold text-sm text-primary">
+                  Passport-Style Photo
+                </label>
+                <label className="border-2 border-dashed border-border-strong rounded-xl p-6 flex items-center gap-4 cursor-pointer hover:border-accent transition-colors bg-bg">
+                  {avatarFile ? (
+                    <img
+                      src={URL.createObjectURL(avatarFile)}
+                      alt="Preview"
+                      className="w-20 h-24 rounded-lg object-cover border border-border"
+                    />
+                  ) : (
+                    <div className="w-20 h-24 rounded-lg bg-[#e6e8ea] flex items-center justify-center text-2xl border border-border">
+                      📷
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-body text-body text-base">
+                      {avatarFile ? avatarFile.name : "Click to upload your photo"}
+                    </p>
+                    <p className="font-body text-muted text-sm mt-1">JPG, PNG, WEBP (Max 5MB)</p>
+                  </div>
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    className="hidden"
+                    onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                  />
+                </label>
               </div>
 
               <div className="grid grid-cols-2 gap-6">
@@ -324,7 +351,7 @@ export default function PatientRegistrationPage() {
       <footer className="bg-[#e0e3e5] border-t border-border-strong px-12 py-8 flex items-center justify-between">
         <div>
           <p className="font-heading font-bold text-sm text-primary">MeroHealth</p>
-          <p className="font-body text-body text-base">© 2024 MeroHealth. Verified by Ministry of Health Nepal.</p>
+          <p className="font-body text-body text-base">© 2026 MeroHealth. Verified by Ministry of Health Nepal.</p>
         </div>
         <div className="flex gap-6">
           <Link href="#" className="font-heading font-semibold text-sm text-body hover:text-primary">Privacy Policy</Link>

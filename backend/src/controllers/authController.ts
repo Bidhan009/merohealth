@@ -29,7 +29,7 @@ const patientRegisterSchema = z.object({
   password: z.string().min(8),
   fullName: z.string().min(2),
   dateOfBirth: z.coerce.date(),
-  citizenId: z.string().min(3).optional(),
+  citizenId: z.string().min(3).optional().or(z.literal("")),
 });
 
 const loginSchema = z.object({
@@ -122,6 +122,8 @@ export async function registerPatient(req: Request, res: Response) {
     const hashedPassword = await hashPassword(data.password);
 
     const verificationToken = generateVerificationToken();
+    const avatarUrl = req.file ? `/uploads/avatars/${req.file.filename}` : null;
+
     const newUser = await prisma.user.create({
       data: {
         email: data.email,
@@ -135,6 +137,7 @@ export async function registerPatient(req: Request, res: Response) {
             dateOfBirth: data.dateOfBirth,
             citizenId: finalCitizenId,
             isMinor: isMinor,
+            avatarUrl: avatarUrl,
           },
         },
       },

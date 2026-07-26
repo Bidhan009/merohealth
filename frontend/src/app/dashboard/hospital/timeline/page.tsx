@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
+import { SkeletonListItem } from "@/components/Skeleton";
 
 interface Report {
   id: string;
@@ -79,8 +80,11 @@ export default function HospitalTimelinePage() {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-24">
-              <p className="font-body text-muted text-base">Loading timeline...</p>
+            <div className="bg-white border border-border rounded-xl shadow-sm flex flex-col">
+              <SkeletonListItem />
+              <SkeletonListItem />
+              <SkeletonListItem />
+              <SkeletonListItem />
             </div>
           ) : groups.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">

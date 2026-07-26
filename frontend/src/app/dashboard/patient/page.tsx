@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
+import { SkeletonCard, SkeletonListItem } from "@/components/Skeleton";
 
 interface Report {
   id: string;
@@ -54,8 +55,15 @@ export default function PatientDashboard() {
   if (loading) {
     return (
       <PatientLayout>
-        <div className="flex items-center justify-center py-24">
-          <p className="font-body text-muted text-base">Loading your health records...</p>
+        <div className="grid grid-cols-3 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <div className="bg-white border border-border rounded-xl shadow-sm flex flex-col mt-6">
+          <SkeletonListItem />
+          <SkeletonListItem />
+          <SkeletonListItem />
         </div>
       </PatientLayout>
     );

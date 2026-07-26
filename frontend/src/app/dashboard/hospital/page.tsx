@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken } from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
+import { SkeletonCard, SkeletonListItem } from "@/components/Skeleton";
 
 interface Patient {
   id: string;
@@ -25,12 +26,13 @@ export default function HospitalDashboard() {
   const [linkMessage, setLinkMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [hospitalName, setHospitalName] = useState("");
+  const [initialLoading, setInitialLoading] = useState(true);
   
 
   useEffect(() => {
-    if (!token) { router.replace("/login"); return; }
-    fetchPatients();
-  }, []);
+  if (!token) { router.replace("/login"); return; }
+  fetchPatients().finally(() => setInitialLoading(false));
+}, []);
 
   async function fetchPatients() {
     const res = await fetch("http://localhost:5000/api/hospital/patients", {
@@ -103,7 +105,12 @@ export default function HospitalDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-6">
-        {[
+        {initialLoading ? (
+          <>
+          <SkeletonCard /><SkeletonCard /><SkeletonCard /><SkeletonCard />
+          </>
+        ):(
+        [
           { label: "Total Patients", value: patients.length, badge: "Active", badgeColor: "text-green-700 bg-green-100" },
           { label: "Reports This Month", value: "—", badge: "Monthly", badgeColor: "text-body bg-[#e6e8ea]" },
           { label: "Added Today", value: "—", badge: "Today", badgeColor: "text-body bg-[#e6e8ea]" },
@@ -123,7 +130,8 @@ export default function HospitalDashboard() {
               <p className="font-heading font-bold text-5xl text-primary tracking-tight">{stat.value}</p>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
 
       {/* Search + Patients Grid */}

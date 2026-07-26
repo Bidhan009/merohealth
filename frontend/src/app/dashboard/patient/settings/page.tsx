@@ -6,6 +6,7 @@ import { getToken } from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
 import { getInitials } from "@/utils/avatar";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter";
+import { Skeleton } from "@/components/Skeleton";
 
 interface PatientInfo {
   fullName: string;
@@ -113,8 +114,24 @@ export default function PatientSettingsPage() {
       </div>
 
       {loading ? (
-        <div className="py-24 text-center">
-          <p className="font-body text-muted text-base">Loading...</p>
+        <div className="flex flex-col gap-6 max-w-3xl">
+          <div className="bg-white border border-border rounded-xl shadow-sm p-8">
+            <Skeleton className="w-40 h-6 mb-6" />
+            <div className="flex items-start gap-8">
+              <Skeleton className="w-40 h-48 rounded-xl shrink-0" />
+              <div className="flex flex-col gap-3 pt-2">
+                <Skeleton className="w-40 h-6" />
+                <Skeleton className="w-28 h-4" />
+                <Skeleton className="w-60 h-16" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white border border-border rounded-xl shadow-sm p-8 grid grid-cols-2 gap-6">
+            <Skeleton className="w-full h-14" />
+            <Skeleton className="w-full h-14" />
+            <Skeleton className="w-full h-14" />
+            <Skeleton className="w-full h-14" />
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-6 max-w-3xl">

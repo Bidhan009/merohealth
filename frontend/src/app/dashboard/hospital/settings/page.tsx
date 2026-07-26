@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getToken, logout } from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
 import { getInitials } from "@/utils/avatar";
+import { Skeleton } from "@/components/Skeleton";
 
 interface HospitalProfile {
   name: string;
@@ -108,8 +109,21 @@ export default function HospitalSettingsPage() {
           </div>
 
           {loading ? (
-            <div className="py-24 text-center">
-              <p className="font-body text-muted text-base">Loading profile...</p>
+            <div className="flex flex-col gap-6">
+              <div className="flex items-start gap-8 pb-8 border-b border-border mb-2">
+                <Skeleton className="w-40 h-48 rounded-xl shrink-0" />
+                <div className="flex flex-col gap-3 pt-2">
+                  <Skeleton className="w-40 h-6" />
+                  <Skeleton className="w-28 h-4" />
+                  <Skeleton className="w-60 h-16" />
+                </div>
+              </div>
+              <div className="bg-white border border-border rounded-xl shadow-sm p-8 flex flex-col gap-5">
+                <Skeleton className="w-48 h-6 mb-2" />
+                <Skeleton className="w-full h-12" />
+                <Skeleton className="w-full h-12" />
+                <Skeleton className="w-full h-20" />
+              </div>
             </div>
           ) : (
             <div className="flex flex-col gap-6">

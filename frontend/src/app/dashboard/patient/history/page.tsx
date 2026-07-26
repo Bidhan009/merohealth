@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import PatientLayout from "@/components/PatientLayout";
+import { SkeletonListItem } from "@/components/Skeleton";
 
 interface Report {
   id: string;
@@ -170,8 +171,11 @@ export default function PatientHistoryPage() {
               </h2>
             </div>
             {loading ? (
-              <div className="p-12 text-center">
-                <p className="font-body text-muted text-base">Loading...</p>
+              <div className="flex flex-col">
+                <SkeletonListItem />
+                <SkeletonListItem />
+                <SkeletonListItem />
+                <SkeletonListItem />
               </div>
             ) : displayed.length === 0 ? (
               <div className="p-12 flex flex-col items-center gap-4 text-center">

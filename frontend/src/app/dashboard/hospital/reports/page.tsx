@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getToken} from "@/utils/auth";
 import HospitalLayout from "@/components/HospitalLayout";
+import { SkeletonListItem } from "@/components/Skeleton";
 
 interface Report {
   id: string;
@@ -110,8 +111,11 @@ interface Report {
           {/* Results */}
           <div className="bg-white border border-border rounded-xl shadow-sm">
             {loading ? (
-              <div className="p-12 text-center">
-                <p className="font-body text-muted text-base">Loading reports...</p>
+              <div className="flex flex-col">
+                <SkeletonListItem />
+                <SkeletonListItem />
+                <SkeletonListItem />
+                <SkeletonListItem />
               </div>
             ) : filtered.length === 0 ? (
               <div className="p-12 flex flex-col items-center gap-4 text-center">
